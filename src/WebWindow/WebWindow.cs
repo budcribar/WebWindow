@@ -41,7 +41,7 @@ namespace WebWindows
         { }
     }
 
-    public class WebWindow
+    public class WebWindow : IWebWindow
     {
         // Here we use auto charset instead of forcing UTF-8.
         // Thus the native code for Windows will be much more simple.
