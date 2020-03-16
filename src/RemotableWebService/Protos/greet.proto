@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "RemoteableWebWindowService";
+
+package greet;
+
+message SendMessageRequest {
+    string message = 1;
+}
+
+message ShowMessageRequest {
+    string title = 1;
+    string body = 2;
+}
+message UrlMessageRequest {
+    string url = 1;
+}
+
+
+service RemoteWebWindow {
+    rpc WaitForExit(google.protobuf.Empty) returns (google.protobuf.Empty);
+    rpc Show (google.protobuf.Empty) returns (google.protobuf.Empty);
+     rpc ShowMessage(ShowMessageRequest) returns (google.protobuf.Empty);
+     rpc NavigateToUrl(UrlMessageRequest) returns (google.protobuf.Empty);
+    rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty);   
+}
