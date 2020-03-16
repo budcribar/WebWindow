@@ -11,9 +11,9 @@ namespace WebWindows.Blazor
     internal class IPC
     {
         private readonly Dictionary<string, List<Action<object>>> _registrations = new Dictionary<string, List<Action<object>>>();
-        private readonly WebWindow _webWindow;
+        private readonly IWebWindow _webWindow;
 
-        public IPC(WebWindow webWindow)
+        public IPC(IWebWindow webWindow)
         {
             _webWindow = webWindow ?? throw new ArgumentNullException(nameof(webWindow));
             _webWindow.OnWebMessageReceived += HandleScriptNotify;
