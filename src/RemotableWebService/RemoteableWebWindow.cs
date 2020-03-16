@@ -8,6 +8,21 @@ namespace RemotableWebWindow
     public class RemotableWebWindow : IWebWindow
     {
         private Uri uri;
+        private string windowTitle;
+        private string hostHtmlPath;
+
+
+        private string id = null;
+        private string Id
+        {
+            get
+            {
+                if (id == null)
+                    id = Guid.NewGuid().ToString();
+
+                return id;
+            }
+        }
         private RemoteWebWindow.RemoteWebWindowClient client = null;
 
         private RemoteWebWindow.RemoteWebWindowClient Client {
@@ -25,7 +40,7 @@ namespace RemotableWebWindow
 
         public event EventHandler<string> OnWebMessageReceived;
 
-        public RemotableWebWindow(Uri uri)
+        public RemotableWebWindow(Uri uri, string windowTitle, string hostHtmlPath)
         {
             this.uri = uri;
         }
@@ -37,27 +52,27 @@ namespace RemotableWebWindow
 
         public void NavigateToUrl(string url)
         {
-            Client.NavigateToUrl(new UrlMessageRequest { Url = url });
+            Client.NavigateToUrl(new UrlMessageRequest {  Id=Id, Url = url });
         }
 
         public void SendMessage(string message)
         {
-            Client.SendMessage(new SendMessageRequest { Message = message });
+            Client.SendMessage(new SendMessageRequest { Id=Id, Message = message });
         }
 
         public void Show()
         {
-            Client.Show(new Google.Protobuf.WellKnownTypes.Empty());
+            Client.Show(new IdMessageRequest { Id=Id });
         }
 
         public void ShowMessage(string title, string body)
         {
-            Client.ShowMessage(new ShowMessageRequest { Body = body, Title = title });
+            Client.ShowMessage(new ShowMessageRequest { Id=Id, Body = body, Title = title });
         }
 
         public void WaitForExit()
         {
-            Client.WaitForExit(new Google.Protobuf.WellKnownTypes.Empty());
+            Client.WaitForExit(new IdMessageRequest { Id = id });
         }
     }
 }

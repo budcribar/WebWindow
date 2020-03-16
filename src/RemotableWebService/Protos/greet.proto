@@ -7,22 +7,36 @@ option csharp_namespace = "RemoteableWebWindowService";
 package greet;
 
 message SendMessageRequest {
-    string message = 1;
+    string id = 1;
+    string message = 2;
 }
 
 message ShowMessageRequest {
-    string title = 1;
-    string body = 2;
+    string id = 1;
+    string title = 2;
+    string body = 3;
 }
 message UrlMessageRequest {
-    string url = 1;
+    string id = 1;
+    string url = 2;
+}
+
+message IdMessageRequest {
+    string id = 1;
+}
+
+message CreateWebWindowRequest {
+  string id = 1;
+  string title = 2;
+  string htmlHostPath = 3;
 }
 
 
 service RemoteWebWindow {
-    rpc WaitForExit(google.protobuf.Empty) returns (google.protobuf.Empty);
-    rpc Show (google.protobuf.Empty) returns (google.protobuf.Empty);
-     rpc ShowMessage(ShowMessageRequest) returns (google.protobuf.Empty);
-     rpc NavigateToUrl(UrlMessageRequest) returns (google.protobuf.Empty);
+    rpc CreateWebWindow(CreateWebWindowRequest) returns (google.protobuf.Empty);
+    rpc WaitForExit(IdMessageRequest) returns (google.protobuf.Empty);
+    rpc Show (IdMessageRequest) returns (google.protobuf.Empty);
+    rpc ShowMessage(ShowMessageRequest) returns (google.protobuf.Empty);
+    rpc NavigateToUrl(UrlMessageRequest) returns (google.protobuf.Empty);
     rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty);   
 }

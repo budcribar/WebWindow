@@ -7,6 +7,12 @@
   <ItemGroup>
     <Protobuf Include="Protos\greet.proto" GrpcServices="Server" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.24.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebWindow.Blazor\WebWindow.Blazor.csproj" />
+    <ProjectReference Include="..\WebWindow\WebWindow.csproj" />
   </ItemGroup>
 
 </Project>

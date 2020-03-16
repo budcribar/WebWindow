@@ -23,38 +23,14 @@ namespace WebWindows.Blazor
         internal static DesktopRenderer DesktopRenderer { get; private set; }
         internal static IWebWindow WebWindow { get; private set; }
 
-        public static void Run<TStartup>(string windowTitle, string hostHtmlPath)
+        public static void Run<TStartup>(string windowTitle, string hostHtmlPath, IWebWindow webWindow)
         {
             DesktopSynchronizationContext.UnhandledException += (sender, exception) =>
             {
                 UnhandledException(exception);
             };
 
-            WebWindow = new WebWindow(windowTitle, options =>
-            {
-                var contentRootAbsolute = Path.GetDirectoryName(Path.GetFullPath(hostHtmlPath));
-
-                options.SchemeHandlers.Add(BlazorAppScheme, (string url, out string contentType) =>
-                {
-                    // TODO: Only intercept for the hostname 'app' and passthrough for others
-                    // TODO: Prevent directory traversal?
-                    var appFile = Path.Combine(contentRootAbsolute, new Uri(url).AbsolutePath.Substring(1));
-                    if (appFile == contentRootAbsolute)
-                    {
-                        appFile = hostHtmlPath;
-                    }
-
-                    contentType = GetContentType(appFile);
-                    return File.Exists(appFile) ? File.OpenRead(appFile) : null;
-                });
-
-                // framework:// is resolved as embedded resources
-                options.SchemeHandlers.Add("framework", (string url, out string contentType) =>
-                {
-                    contentType = GetContentType(url);
-                    return SupplyFrameworkFile(url);
-                });
-            });
+            WebWindow = webWindow;
 
             CancellationTokenSource appLifetimeCts = new CancellationTokenSource();
             Task.Factory.StartNew(async () =>
@@ -80,6 +56,41 @@ namespace WebWindows.Blazor
             {
                 appLifetimeCts.Cancel();
             }
+        }
+
+        public static Action<WebWindowOptions> StandardOptions(string hostHtmlPath)
+        {
+            return (options) => {
+                var contentRootAbsolute = Path.GetDirectoryName(Path.GetFullPath(hostHtmlPath));
+
+                options.SchemeHandlers.Add(BlazorAppScheme, (string url, out string contentType) =>
+                {
+                    // TODO: Only intercept for the hostname 'app' and passthrough for others
+                    // TODO: Prevent directory traversal?
+                    var appFile = Path.Combine(contentRootAbsolute, new Uri(url).AbsolutePath.Substring(1));
+                    if (appFile == contentRootAbsolute)
+                    {
+                        appFile = hostHtmlPath;
+                    }
+
+                    contentType = GetContentType(appFile);
+                    return File.Exists(appFile) ? File.OpenRead(appFile) : null;
+                });
+
+                // framework:// is resolved as embedded resources
+                options.SchemeHandlers.Add("framework", (string url, out string contentType) =>
+                {
+                    contentType = GetContentType(url);
+                    return SupplyFrameworkFile(url);
+                });
+            }; 
+        }
+
+        public static void Run<TStartup>(string windowTitle, string hostHtmlPath)
+        {
+            var webWindow = new WebWindow(windowTitle, StandardOptions(hostHtmlPath));
+
+            Run<TStartup>(windowTitle, hostHtmlPath, webWindow);
         }
 
         private static string GetContentType(string url)
