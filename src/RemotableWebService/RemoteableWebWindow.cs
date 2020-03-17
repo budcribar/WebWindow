@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Grpc.Core;
 using Grpc.Net.Client;
 using RemoteableWebWindowService;
 using WebWindows;
@@ -24,7 +27,7 @@ namespace RemotableWebWindow
             }
         }
         private RemoteWebWindow.RemoteWebWindowClient client = null;
-
+        private CancellationTokenSource cts = new CancellationTokenSource();
         private RemoteWebWindow.RemoteWebWindowClient Client {
             get {
 
@@ -33,7 +36,31 @@ namespace RemotableWebWindow
                     var channel = GrpcChannel.ForAddress(uri);
 
                     client = new RemoteWebWindow.RemoteWebWindowClient(channel);
-                    client.CreateWebWindow(new CreateWebWindowRequest { Id = Id, HtmlHostPath = hostHtmlPath, Title = windowTitle }); // TODO parameter names
+                    var events = client.CreateWebWindow(new CreateWebWindowRequest { Id = Id, HtmlHostPath = hostHtmlPath, Title = windowTitle }, cancellationToken: cts.Token); // TODO parameter names
+                    var completed = new ManualResetEventSlim();
+                    var first = true;
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await foreach (var message in events.ResponseStream.ReadAllAsync())
+                            {
+                                if (first)
+                                {
+                                    first = false;
+                                    completed.Set();
+                                }
+                                else
+                                    OnWebMessageReceived.Invoke(null, message.Message);
+                            }
+                        }
+                        catch (RpcException ex) when (ex.StatusCode == StatusCode.Cancelled)
+                        {
+                           
+                            Console.WriteLine("Stream cancelled.");  //TODO
+                        }
+                    });
+                    completed.Wait();
 
                 }
                 return client;

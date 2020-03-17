@@ -31,9 +31,13 @@ message CreateWebWindowRequest {
   string htmlHostPath = 3;
 }
 
+message WebMessageResponse {
+    string message = 1;
+}
+
 
 service RemoteWebWindow {
-    rpc CreateWebWindow(CreateWebWindowRequest) returns (google.protobuf.Empty);
+    rpc CreateWebWindow(CreateWebWindowRequest) returns (stream WebMessageResponse);
     rpc WaitForExit(IdMessageRequest) returns (google.protobuf.Empty);
     rpc Show (IdMessageRequest) returns (google.protobuf.Empty);
     rpc ShowMessage(ShowMessageRequest) returns (google.protobuf.Empty);

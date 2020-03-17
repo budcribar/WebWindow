@@ -23,17 +23,33 @@ namespace RemoteableWebWindowService
             _webWindowDictionary = webWindowDictionary;
         }
 
-        public override Task<Empty> CreateWebWindow(CreateWebWindowRequest request, ServerCallContext context)
+        public override async Task CreateWebWindow(CreateWebWindowRequest request, IServerStreamWriter<WebMessageResponse> responseStream, ServerCallContext context)
         {
             Guid id = Guid.Parse(request.Id);
             if (!_webWindowDictionary.ContainsKey(id))
             {
                 var webWindow = new WebWindow(request.Title, ComponentsDesktop.StandardOptions(request.HtmlHostPath));
-                
                 _webWindowDictionary.TryAdd(id, webWindow);
+                await responseStream.WriteAsync(new WebMessageResponse { Message = "Web Window has been created" });
+
+                webWindow.OnWebMessageReceived += (sender, message) =>
+                {
+                    // if (!context.CancellationToken.IsCancellationRequested)  //TODO cancellationtoken is null
+                    responseStream.WriteAsync(new WebMessageResponse { Message = message });
+                };
+                while (!context.CancellationToken.IsCancellationRequested)
+                {
+                    await Task.Delay(1000);
+
+                }
             }
 
-            return Task.FromResult<Empty>(new Empty());
+            //return Task.FromResult<Empty>(new Empty());
+        }
+
+        private void WebWindowOnWebMessageReceived(object sender, string e)
+        {
+            throw new NotImplementedException();
         }
 
         public override Task<Empty> WaitForExit(IdMessageRequest request, ServerCallContext context) {
