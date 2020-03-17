@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\RemotableWebService\RemotableWebWindow.csproj" />
     <ProjectReference Include="..\..\src\WebWindow.Blazor\WebWindow.Blazor.csproj" />
   </ItemGroup>
 

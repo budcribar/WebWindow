@@ -23,10 +23,11 @@ namespace WebWindows.Blazor
         {
             try
             {
-                _webWindow.Invoke(() =>
-                {
+                // TODO
+                //_webWindow.Invoke(() =>
+                //{
                     _webWindow.SendMessage($"{eventName}:{JsonSerializer.Serialize(args)}");
-                });
+                //});
             }
             catch (Exception ex)
             {

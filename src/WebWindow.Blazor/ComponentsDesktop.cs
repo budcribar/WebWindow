@@ -23,7 +23,7 @@ namespace WebWindows.Blazor
         internal static DesktopRenderer DesktopRenderer { get; private set; }
         internal static IWebWindow WebWindow { get; private set; }
 
-        public static void Run<TStartup>(string windowTitle, string hostHtmlPath, IWebWindow webWindow)
+        public static void Run<TStartup>(IWebWindow webWindow)
         {
             DesktopSynchronizationContext.UnhandledException += (sender, exception) =>
             {
@@ -50,7 +50,8 @@ namespace WebWindows.Blazor
             try
             {
                 WebWindow.NavigateToUrl(BlazorAppScheme + "://app/");
-                WebWindow.WaitForExit();
+                WebWindow.WaitForExit();//todo
+                //Thread.Sleep(1000 * 30);
             }
             finally
             {
@@ -89,9 +90,9 @@ namespace WebWindows.Blazor
         public static void Run<TStartup>(string windowTitle, string hostHtmlPath)
         {
             var webWindow = new WebWindow(windowTitle, StandardOptions(hostHtmlPath));
-
-            Run<TStartup>(windowTitle, hostHtmlPath, webWindow);
+            Run<TStartup>(webWindow);
         }
+        
 
         private static string GetContentType(string url)
         {

@@ -1,0 +1,6 @@
+﻿WebWindow.NavigateToUrl http://app/
+	-> read File.OpenRead(wwwroot/index.html)
+	-> read bootstrap.min.css
+
+
+	ComponentsDesktop. Run<TStartup>(IWebWindow webWindow)

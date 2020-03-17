@@ -233,7 +233,17 @@ namespace WebWindows
 
         public void SendMessage(string message)
         {
-            WebWindow_SendMessage(_nativeWebWindow, message);
+            // TODO
+            if (Thread.CurrentThread.ManagedThreadId == _ownerThreadId)
+            {
+                WebWindow_SendMessage(_nativeWebWindow, message);
+            }
+            else
+            {
+                WebWindow_Invoke(_nativeWebWindow, () => WebWindow_SendMessage(_nativeWebWindow, message));
+            }
+
+            
         }
 
         public event EventHandler<string> OnWebMessageReceived;

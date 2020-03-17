@@ -30,9 +30,11 @@ namespace RemotableWebWindow
 
                 if (client ==null)
                 {
-                    using var channel = GrpcChannel.ForAddress(uri);
+                    var channel = GrpcChannel.ForAddress(uri);
 
                     client = new RemoteWebWindow.RemoteWebWindowClient(channel);
+                    client.CreateWebWindow(new CreateWebWindowRequest { Id = Id, HtmlHostPath = hostHtmlPath, Title = windowTitle }); // TODO parameter names
+
                 }
                 return client;
             }
@@ -43,6 +45,8 @@ namespace RemotableWebWindow
         public RemotableWebWindow(Uri uri, string windowTitle, string hostHtmlPath)
         {
             this.uri = uri;
+            this.windowTitle = windowTitle;
+            this.hostHtmlPath = hostHtmlPath;
         }
 
         public void Invoke(Action workItem)

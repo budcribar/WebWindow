@@ -23,32 +23,33 @@ namespace RemoteableWebWindowService
             _webWindowDictionary = webWindowDictionary;
         }
 
-        public Task<Empty> CreateWebWindow(CreateWebWindowRequest request)
+        public override Task<Empty> CreateWebWindow(CreateWebWindowRequest request, ServerCallContext context)
         {
             Guid id = Guid.Parse(request.Id);
             if (!_webWindowDictionary.ContainsKey(id))
             {
                 var webWindow = new WebWindow(request.Title, ComponentsDesktop.StandardOptions(request.HtmlHostPath));
+                
                 _webWindowDictionary.TryAdd(id, webWindow);
             }
 
             return Task.FromResult<Empty>(new Empty());
         }
 
-        public Task<Empty> WaitForExit(IdMessageRequest request) {
+        public override Task<Empty> WaitForExit(IdMessageRequest request, ServerCallContext context) {
             Guid id = Guid.Parse(request.Id);
             _webWindowDictionary[id].WaitForExit();
             return Task.FromResult<Empty>(new Empty());
         }
 
-        public Task<Empty> Show(IdMessageRequest request)
+        public override Task<Empty> Show(IdMessageRequest request, ServerCallContext context)
         {
             Guid id = Guid.Parse(request.Id);
             _webWindowDictionary[id].Show();
             return Task.FromResult<Empty>(new Empty());
         }
 
-        public Task<Empty> ShowMessage(ShowMessageRequest request)
+        public override Task<Empty> ShowMessage(ShowMessageRequest request, ServerCallContext context)
         {
             Guid id = Guid.Parse(request.Id);
             _webWindowDictionary[id].ShowMessage(request.Title, request.Body);
@@ -56,14 +57,14 @@ namespace RemoteableWebWindowService
         }
 
         
-        public Task<Empty> NavigateToUrl(UrlMessageRequest request)
+        public override Task<Empty> NavigateToUrl(UrlMessageRequest request, ServerCallContext context)
         {
             Guid id = Guid.Parse(request.Id);
             _webWindowDictionary[id].NavigateToUrl(request.Url);
             return Task.FromResult<Empty>(new Empty());
         }
 
-        public Task<Empty> SendMessage(SendMessageRequest request)
+        public override Task<Empty> SendMessage(SendMessageRequest request, ServerCallContext context)
         {
             Guid id = Guid.Parse(request.Id);
             _webWindowDictionary[id].SendMessage(request.Message);
