@@ -35,8 +35,17 @@ message WebMessageResponse {
     string message = 1;
 }
 
+message FileReadRequest {
+    string path = 1;
+     bytes data = 2;
+}
+message FileReadResponse {
+    string path = 1;   
+}
+
 service RemoteWebWindow {
     rpc CreateWebWindow(CreateWebWindowRequest) returns (stream WebMessageResponse);
+    rpc FileReader(stream FileReadRequest) returns (stream FileReadResponse);
     rpc NavigateToUrl(UrlMessageRequest) returns (google.protobuf.Empty);
     rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty); 
     rpc Show (IdMessageRequest) returns (google.protobuf.Empty);

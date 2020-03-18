@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Net.Client;
 using RemoteableWebWindowService;
 using WebWindows;
+using Google.Protobuf;
 
 namespace RemotableWebWindow
 {
@@ -30,7 +32,7 @@ namespace RemotableWebWindow
         private CancellationTokenSource cts = new CancellationTokenSource();
         private RemoteWebWindow.RemoteWebWindowClient Client {
             get {
-
+                // TODO shutdown
                 if (client ==null)
                 {
                     var channel = GrpcChannel.ForAddress(uri);
@@ -60,6 +62,22 @@ namespace RemotableWebWindow
                             Console.WriteLine("Stream cancelled.");  //TODO
                         }
                     });
+                  
+                    //Task.Run(async () => {
+                    //    var files = client.FileReader();
+                    //    await foreach (var message in files.ResponseStream.ReadAllAsync())
+                    //    {
+                    //        if (File.Exists(message.Path))
+                    //        {
+                    //            var bytes = File.ReadAllBytes(message.Path);
+                    //            await files.RequestStream.WriteAsync(new FileReadRequest { Path = message.Path, Data = ByteString.CopyFrom (bytes) });
+                    //        }
+                    //        else await files.RequestStream.WriteAsync(new FileReadRequest { Path = message.Path });
+
+                    //    }
+                    
+                    //});
+
                     completed.Wait();
 
                 }

@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 using WebWindows;
 using System.IO;
 using WebWindows.Blazor;
+using System.Threading;
 
 namespace RemoteableWebWindowService
 {
@@ -16,6 +17,8 @@ namespace RemoteableWebWindowService
     {
         private readonly ILogger<RemoteWebWindowService> _logger;
         private readonly ConcurrentDictionary<Guid, WebWindow> _webWindowDictionary;
+        private readonly ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)> _fileDictionary = new ConcurrentDictionary<string, (MemoryStream,ManualResetEventSlim)>();
+        private BlockingCollection<string> _fileCollection = new BlockingCollection<string>();
 
         public RemoteWebWindowService(ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, WebWindow> webWindowDictionary)
         {
@@ -23,7 +26,7 @@ namespace RemoteableWebWindowService
             _webWindowDictionary = webWindowDictionary;
         }
 
-        public static Action<WebWindowOptions> RemoteOptions(string hostHtmlPath)
+        public Action<WebWindowOptions> RemoteOptions(string hostHtmlPath)
         {
             return (options) => {
                 var contentRootAbsolute = Path.GetDirectoryName(Path.GetFullPath(hostHtmlPath));
@@ -39,7 +42,12 @@ namespace RemoteableWebWindowService
                     }
 
                     contentType = ComponentsDesktop.GetContentType(appFile);
-                    return File.Exists(appFile) ? File.OpenRead(appFile) : null;
+
+                    if (_fileDictionary.ContainsKey(appFile)) return null; // TODO
+                    _fileDictionary[appFile] = (null, new ManualResetEventSlim());
+                    _fileCollection.Add(appFile);
+                    _fileDictionary[appFile].mres.Wait();
+                    return _fileDictionary[appFile].stream;
                 });
 
                 // framework:// is resolved as embedded resources
@@ -56,6 +64,7 @@ namespace RemoteableWebWindowService
             Guid id = Guid.Parse(request.Id);
             if (!_webWindowDictionary.ContainsKey(id))
             {
+                //var webWindow = new WebWindow(request.Title, RemoteOptions(request.HtmlHostPath));
                 var webWindow = new WebWindow(request.Title, ComponentsDesktop.StandardOptions(request.HtmlHostPath));
                 _webWindowDictionary.TryAdd(id, webWindow);
                 await responseStream.WriteAsync(new WebMessageResponse { Message = "Web Window has been created" });
@@ -74,11 +83,24 @@ namespace RemoteableWebWindowService
             }
         }
 
-        private void WebWindowOnWebMessageReceived(object sender, string e)
-        {
-            throw new NotImplementedException();
-        }
 
+        public override async Task FileReader(IAsyncStreamReader<FileReadRequest> requestStream, IServerStreamWriter<FileReadResponse> responseStream, ServerCallContext context)
+        {
+            var task = Task.Run(async () => {
+                while (true)
+                {
+                    string file = _fileCollection.Take();
+                    await responseStream.WriteAsync(new FileReadResponse { Path = file });
+                }
+                       
+            });
+            await foreach (var message in requestStream.ReadAllAsync())
+            {
+                var tuple = _fileDictionary[message.Path];
+                tuple.stream = new MemoryStream(message.Data.ToArray());
+                tuple.mres.Set();
+            }
+        }
         public override Task<Empty> WaitForExit(IdMessageRequest request, ServerCallContext context) {
             Guid id = Guid.Parse(request.Id);
             _webWindowDictionary[id].WaitForExit();
