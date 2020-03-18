@@ -94,7 +94,7 @@ namespace WebWindows.Blazor
         }
         
 
-        private static string GetContentType(string url)
+        public static string GetContentType(string url)
         {
             var ext = Path.GetExtension(url);
             switch (ext)
@@ -107,7 +107,7 @@ namespace WebWindows.Blazor
             return "application/octet-stream";
         }
 
-        private static string BlazorAppScheme
+        public static string BlazorAppScheme
         {
             get
             {
@@ -165,7 +165,7 @@ namespace WebWindows.Blazor
             }
         }
 
-        private static Stream SupplyFrameworkFile(string uri)
+        public static Stream SupplyFrameworkFile(string uri)
         {
             switch (uri)
             {

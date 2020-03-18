@@ -23,6 +23,34 @@ namespace RemoteableWebWindowService
             _webWindowDictionary = webWindowDictionary;
         }
 
+        public static Action<WebWindowOptions> RemoteOptions(string hostHtmlPath)
+        {
+            return (options) => {
+                var contentRootAbsolute = Path.GetDirectoryName(Path.GetFullPath(hostHtmlPath));
+
+                options.SchemeHandlers.Add(ComponentsDesktop.BlazorAppScheme, (string url, out string contentType) =>
+                {
+                    // TODO: Only intercept for the hostname 'app' and passthrough for others
+                    // TODO: Prevent directory traversal?
+                    var appFile = Path.Combine(contentRootAbsolute, new Uri(url).AbsolutePath.Substring(1));
+                    if (appFile == contentRootAbsolute)
+                    {
+                        appFile = hostHtmlPath;
+                    }
+
+                    contentType = ComponentsDesktop.GetContentType(appFile);
+                    return File.Exists(appFile) ? File.OpenRead(appFile) : null;
+                });
+
+                // framework:// is resolved as embedded resources
+                options.SchemeHandlers.Add("framework", (string url, out string contentType) =>
+                {
+                    contentType = ComponentsDesktop.GetContentType(url);
+                    return ComponentsDesktop.SupplyFrameworkFile(url);
+                });
+            };
+        }
+
         public override async Task CreateWebWindow(CreateWebWindowRequest request, IServerStreamWriter<WebMessageResponse> responseStream, ServerCallContext context)
         {
             Guid id = Guid.Parse(request.Id);
@@ -34,8 +62,9 @@ namespace RemoteableWebWindowService
 
                 webWindow.OnWebMessageReceived += (sender, message) =>
                 {
-                    // if (!context.CancellationToken.IsCancellationRequested)  //TODO cancellationtoken is null
-                    responseStream.WriteAsync(new WebMessageResponse { Message = message });
+                    //if (!context.CancellationToken.IsCancellationRequested)  //TODO cancellationtoken is null
+                    lock (responseStream)
+                        responseStream.WriteAsync(new WebMessageResponse { Message = message });
                 };
                 while (!context.CancellationToken.IsCancellationRequested)
                 {
@@ -43,8 +72,6 @@ namespace RemoteableWebWindowService
 
                 }
             }
-
-            //return Task.FromResult<Empty>(new Empty());
         }
 
         private void WebWindowOnWebMessageReceived(object sender, string e)
