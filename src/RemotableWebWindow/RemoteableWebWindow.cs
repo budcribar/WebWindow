@@ -30,8 +30,9 @@ namespace RemotableWebWindow
         }
         private RemoteWebWindow.RemoteWebWindowClient client = null;
         private CancellationTokenSource cts = new CancellationTokenSource();
-        private RemoteWebWindow.RemoteWebWindowClient Client {
+        public RemoteWebWindow.RemoteWebWindowClient Client {
             get {
+                lock(cts)
                 // TODO shutdown
                 if (client ==null)
                 {
@@ -53,7 +54,7 @@ namespace RemotableWebWindow
                                     completed.Set();
                                 }
                                 else
-                                    OnWebMessageReceived.Invoke(null, message.Message);
+                                    OnWebMessageReceived?.Invoke(null, message.Message);
                             }
                         }
                         catch (RpcException ex) when (ex.StatusCode == StatusCode.Cancelled)
@@ -92,6 +93,7 @@ namespace RemotableWebWindow
             this.uri = uri;
             this.windowTitle = windowTitle;
             this.hostHtmlPath = hostHtmlPath;
+            //var c = this.Client; // TODO
         }
 
         public void Invoke(Action workItem)

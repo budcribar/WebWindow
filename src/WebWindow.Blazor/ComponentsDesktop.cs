@@ -32,13 +32,17 @@ namespace WebWindows.Blazor
 
             WebWindow = webWindow;
 
+            var completed = new ManualResetEventSlim();
+           
             CancellationTokenSource appLifetimeCts = new CancellationTokenSource();
             Task.Factory.StartNew(async () =>
             {
                 try
                 {
                     var ipc = new IPC(WebWindow);
-                    await RunAsync<TStartup>(ipc, appLifetimeCts.Token);
+                    
+                    await RunAsync<TStartup>(ipc, appLifetimeCts.Token,completed);
+                    
                 }
                 catch (Exception ex)
                 {
@@ -49,9 +53,11 @@ namespace WebWindows.Blazor
 
             try
             {
+                completed.Wait(); // TODO don't we need to wait for th new IPC to finish before trying to navigate?
                 WebWindow.NavigateToUrl(BlazorAppScheme + "://app/");
-                WebWindow.WaitForExit();//todo
-                //Thread.Sleep(1000 * 30);
+
+                Thread.Sleep(60 * 60 * 1000);
+                //WebWindow.WaitForExit();//todo
             }
             finally
             {
@@ -126,14 +132,17 @@ namespace WebWindows.Blazor
             WebWindow.ShowMessage("Error", $"{ex.Message}\n{ex.StackTrace}");
         }
 
-        private static async Task RunAsync<TStartup>(IPC ipc, CancellationToken appLifetime)
+        private static async Task RunAsync<TStartup>(IPC ipc, CancellationToken appLifetime, ManualResetEventSlim completed)
         {
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true);
 
             DesktopJSRuntime = new DesktopJSRuntime(ipc);
+            completed.Set();
+            Thread.Sleep(1000);
             await PerformHandshakeAsync(ipc);
+           
             AttachJsInterop(ipc, appLifetime);
 
             var serviceCollection = new ServiceCollection();
@@ -176,7 +185,7 @@ namespace WebWindows.Blazor
             }
         }
 
-        private static async Task PerformHandshakeAsync(IPC ipc)
+        private static async Task PerformHandshakeAsync(IPC ipc) //TODO
         {
             var tcs = new TaskCompletionSource<object>();
             ipc.Once("components:init", args =>
@@ -184,11 +193,11 @@ namespace WebWindows.Blazor
                 var argsArray = (object[])args;
                 InitialUriAbsolute = ((JsonElement)argsArray[0]).GetString();
                 BaseUriAbsolute = ((JsonElement)argsArray[1]).GetString();
-
+                
                 tcs.SetResult(null);
             });
 
-            await tcs.Task;
+            await tcs.Task; //TODO
         }
 
         private static void AttachJsInterop(IPC ipc, CancellationToken appLifetime)

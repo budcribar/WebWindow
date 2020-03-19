@@ -4,3 +4,9 @@
 
 
 	ComponentsDesktop. Run<TStartup>(IWebWindow webWindow)
+
+
+	Need to create web window and attach the handler at the server and at the client before navigating
+
+	Server creates web window and attaches OnWebMessageReceived before the RemoteWebWindow is instantiated
+

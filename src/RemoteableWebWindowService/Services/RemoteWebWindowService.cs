@@ -66,15 +66,18 @@ namespace RemoteableWebWindowService
             {
                 //var webWindow = new WebWindow(request.Title, RemoteOptions(request.HtmlHostPath));
                 var webWindow = new WebWindow(request.Title, ComponentsDesktop.StandardOptions(request.HtmlHostPath));
-                _webWindowDictionary.TryAdd(id, webWindow);
-                await responseStream.WriteAsync(new WebMessageResponse { Message = "Web Window has been created" });
 
-                webWindow.OnWebMessageReceived += (sender, message) =>
+                webWindow.OnWebMessageReceived += async(sender, message) =>
                 {
                     //if (!context.CancellationToken.IsCancellationRequested)  //TODO cancellationtoken is null
-                    lock (responseStream)
-                        responseStream.WriteAsync(new WebMessageResponse { Message = message });
+                    //lock (responseStream)
+                        await responseStream.WriteAsync(new WebMessageResponse { Message = message });
                 };
+
+                _webWindowDictionary.TryAdd(id, webWindow);
+
+                await responseStream.WriteAsync(new WebMessageResponse { Message = "Web Window has been created" });
+
                 while (!context.CancellationToken.IsCancellationRequested)
                 {
                     await Task.Delay(1000);
