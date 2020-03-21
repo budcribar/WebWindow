@@ -63,23 +63,24 @@ namespace RemotableWebWindow
                             Console.WriteLine("Stream cancelled.");  //TODO
                         }
                     });
-                  
-                    //Task.Run(async () => {
-                    //    var files = client.FileReader();
-                    //    await foreach (var message in files.ResponseStream.ReadAllAsync())
-                    //    {
-                    //        if (File.Exists(message.Path))
-                    //        {
-                    //            var bytes = File.ReadAllBytes(message.Path);
-                    //            await files.RequestStream.WriteAsync(new FileReadRequest { Path = message.Path, Data = ByteString.CopyFrom (bytes) });
-                    //        }
-                    //        else await files.RequestStream.WriteAsync(new FileReadRequest { Path = message.Path });
 
-                    //    }
-                    
-                    //});
+                        Task.Run(async () =>
+                        {
+                            var files = client.FileReader();
+                            await foreach (var message in files.ResponseStream.ReadAllAsync())
+                            {
+                                if (File.Exists(message.Path))
+                                {
+                                    var bytes = File.ReadAllBytes(message.Path);
+                                    await files.RequestStream.WriteAsync(new FileReadRequest { Path = message.Path, Data = ByteString.CopyFrom(bytes) });
+                                }
+                                else await files.RequestStream.WriteAsync(new FileReadRequest { Path = message.Path });
 
-                    completed.Wait();
+                            }
+
+                        });
+
+                        completed.Wait();
 
                 }
                 return client;
@@ -128,7 +129,10 @@ namespace RemotableWebWindow
 
         public void NavigateToLocalFile(string path)
         {
-            Client.NavigateToLocalFile(new FileMessageRequest { Id = id, Path = path });
+            var absolutePath = Path.GetFullPath(path);
+            var url = new Uri(absolutePath, UriKind.Absolute);
+            Client.NavigateToUrl(new UrlMessageRequest { Id = Id, Url = url.ToString() });
+           
         }
     }
 }

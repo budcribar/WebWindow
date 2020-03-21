@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,6 +22,8 @@ namespace RemoteableWebWindowService
         {
             services.AddGrpc();
             services.AddSingleton<ConcurrentDictionary<Guid, WebWindow>>();
+            services.AddSingleton<ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>>();
+            services.AddSingleton<BlockingCollection<string>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

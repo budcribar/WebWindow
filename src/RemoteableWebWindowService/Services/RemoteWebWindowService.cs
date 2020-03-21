@@ -20,13 +20,15 @@ namespace RemoteableWebWindowService
     {
         private readonly ILogger<RemoteWebWindowService> _logger;
         private readonly ConcurrentDictionary<Guid, WebWindow> _webWindowDictionary;
-        private readonly ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)> _fileDictionary = new ConcurrentDictionary<string, (MemoryStream,ManualResetEventSlim)>();
-        private BlockingCollection<string> _fileCollection = new BlockingCollection<string>();
+        private readonly ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)> _fileDictionary;
+        private readonly BlockingCollection<string> _fileCollection;
 
-        public RemoteWebWindowService(ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, WebWindow> webWindowDictionary)
+        public RemoteWebWindowService(ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, WebWindow> webWindowDictionary, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)> fileDictionary, BlockingCollection<string> fileCollection)
         {
             _logger = logger;
             _webWindowDictionary = webWindowDictionary;
+            _fileDictionary = fileDictionary;
+            _fileCollection = fileCollection;        
         }
 
         public Action<WebWindowOptions> HelloWorldOptions()
@@ -60,6 +62,23 @@ namespace RemoteableWebWindowService
                     if (_fileDictionary.ContainsKey(appFile)) return null; // TODO
                     _fileDictionary[appFile] = (null, new ManualResetEventSlim());
                     _fileCollection.Add(appFile);
+                   
+                    _fileDictionary[appFile].mres.Wait();
+                    return _fileDictionary[appFile].stream;
+                });
+
+                options.SchemeHandlers.Add("file", (string url, out string contentType) =>
+                {
+                    var appFile = new Uri(url).AbsolutePath;
+
+                    contentType = ComponentsDesktop.GetContentType(appFile);
+
+
+                    if (_fileDictionary.ContainsKey(appFile)) return null; // TODO
+                    _fileDictionary[appFile] = (null, new ManualResetEventSlim());
+
+                    _fileCollection.Add(appFile);
+                                   
                     _fileDictionary[appFile].mres.Wait();
                     return _fileDictionary[appFile].stream;
                 });
@@ -82,7 +101,7 @@ namespace RemoteableWebWindowService
                 WebWindow webWindow = null;
                
                 //Program.form.Invoke((Action)(() => { webWindow = new WebWindow(request.Title, ComponentsDesktop.StandardOptions(request.HtmlHostPath)); }));
-                Program.form.Invoke((Action)(() => { webWindow = new WebWindow(request.Title, HelloWorldOptions()); }));
+                Program.form.Invoke((Action)(() => { webWindow = new WebWindow(request.Title, RemoteOptions(request.HtmlHostPath)); }));
 
                 webWindow.OnWebMessageReceived += async(sender, message) =>
                 {
@@ -106,11 +125,16 @@ namespace RemoteableWebWindowService
 
         public override async Task FileReader(IAsyncStreamReader<FileReadRequest> requestStream, IServerStreamWriter<FileReadResponse> responseStream, ServerCallContext context)
         {
+
+            // TODO shutdown
             var task = Task.Run(async () => {
                 while (true)
                 {
-                    string file = _fileCollection.Take();
-                    await responseStream.WriteAsync(new FileReadResponse { Path = file });
+                    if ( _fileCollection.TryTake(out string file))
+                    {
+                        await responseStream.WriteAsync(new FileReadResponse { Path = file });
+                    }
+                    Thread.Sleep(200);
                 }
                        
             });
