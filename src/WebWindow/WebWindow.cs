@@ -190,8 +190,7 @@ namespace WebWindows
         public void Invoke(Action workItem)
         {
             // If we're already on the UI thread, no need to dispatch
-            //if (Thread.CurrentThread.ManagedThreadId == _ownerThreadId)
-            if (true)
+            if (Thread.CurrentThread.ManagedThreadId == _ownerThreadId)
             {
                 workItem();
             }

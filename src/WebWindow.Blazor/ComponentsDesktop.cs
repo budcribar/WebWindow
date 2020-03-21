@@ -53,13 +53,9 @@ namespace WebWindows.Blazor
 
             try
             {
-                completed.Wait(); // TODO don't we need to wait for th new IPC to finish before trying to navigate?
-                //WebWindow.ShowMessage("Msg", "Hello");
+                completed.Wait(); // TODO We need to wait for the new IPC to finish before trying to navigate
                 WebWindow.NavigateToUrl(BlazorAppScheme + "://app/");
-                //Thread.Sleep(2000);
-                //WebWindow.NavigateToUrl(BlazorAppScheme + "://app/");
-                //Thread.Sleep(60 * 60 * 1000);
-                WebWindow.WaitForExit();//todo
+                WebWindow.WaitForExit();
             }
             finally
             {
