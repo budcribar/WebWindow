@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WebWindows;
 
-namespace RemoteableWebWindowService
+namespace PeakSwc.RemoteableWebWindows
 {
     public class Startup
     {

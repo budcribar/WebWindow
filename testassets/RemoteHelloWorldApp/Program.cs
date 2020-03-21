@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 using WebWindows;
-using RemotableWebWindow;
+using PeakSwc.RemoteableWebWindows;
 
 namespace RemoteHelloWorldApp
 {
@@ -10,7 +10,7 @@ namespace RemoteHelloWorldApp
     {
         static void Main(string[] args)
         {
-            var window = new RemotableWebWindow.RemotableWebWindow(new Uri("https://localhost:5001"), "My Remote Blazor App", "wwwroot/index.html");
+            var window = new RemotableWebWindow(new Uri("https://localhost:5001"), "My Remote Blazor App", "wwwroot/index.html");
             var c = window.Client; //TODO
 
             window.OnWebMessageReceived += (sender, message) =>

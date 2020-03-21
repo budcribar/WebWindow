@@ -4,11 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Net.Client;
-using RemoteableWebWindowService;
 using WebWindows;
 using Google.Protobuf;
 
-namespace RemotableWebWindow
+namespace PeakSwc.RemoteableWebWindows
 {
     public class RemotableWebWindow : IWebWindow
     {

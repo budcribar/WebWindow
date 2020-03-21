@@ -10,14 +10,12 @@ using WebWindows;
 using System.IO;
 using WebWindows.Blazor;
 using System.Threading;
-using Microsoft.AspNetCore.Components;
-using System.Reactive.Concurrency;
 using System.Text;
 
-namespace RemoteableWebWindowService
+namespace PeakSwc.RemoteableWebWindows
 {
     public class RemoteWebWindowService : RemoteWebWindow.RemoteWebWindowBase
-    {
+    { 
         private readonly ILogger<RemoteWebWindowService> _logger;
         private readonly ConcurrentDictionary<Guid, WebWindow> _webWindowDictionary;
         private readonly ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)> _fileDictionary;

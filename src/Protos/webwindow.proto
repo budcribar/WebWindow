@@ -2,7 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/empty.proto";
 
-option csharp_namespace = "RemoteableWebWindowService";
+option csharp_namespace = " PeakSwc.RemoteableWebWindows";
 
 package webwindow;
 

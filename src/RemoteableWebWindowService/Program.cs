@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System.Windows.Forms;
 
-namespace RemoteableWebWindowService
+namespace PeakSwc.RemoteableWebWindows
 {
     public class Program
     {
