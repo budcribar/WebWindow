@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WebWindow": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

@@ -20,7 +20,10 @@ message UrlMessageRequest {
     string id = 1;
     string url = 2;
 }
-
+message FileMessageRequest {
+    string id = 1;
+    string path = 2;
+}
 message IdMessageRequest {
     string id = 1;
 }
@@ -47,6 +50,7 @@ service RemoteWebWindow {
     rpc CreateWebWindow(CreateWebWindowRequest) returns (stream WebMessageResponse);
     rpc FileReader(stream FileReadRequest) returns (stream FileReadResponse);
     rpc NavigateToUrl(UrlMessageRequest) returns (google.protobuf.Empty);
+    rpc NavigateToLocalFile(FileMessageRequest) returns (google.protobuf.Empty);
     rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty); 
     rpc Show (IdMessageRequest) returns (google.protobuf.Empty);
     rpc ShowMessage(ShowMessageRequest) returns (google.protobuf.Empty);

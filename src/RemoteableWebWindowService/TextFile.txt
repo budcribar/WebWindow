@@ -10,3 +10,9 @@
 
 	Server creates web window and attaches OnWebMessageReceived before the RemoteWebWindow is instantiated
 
+	Do we need to call CoInitiallize(NULL) before creating the web window?
+	https://social.msdn.microsoft.com/Forums/azure/en-US/c1a642e2-184e-4f5a-984a-e30bdfe97fb8/does-createwindowexa-calls-coinitialize-internally?forum=windowsgeneraldevelopmentissues
+
+
+	Debug into C++
+	https://stackoverflow.com/questions/3535075/no-symbols-loaded-in-mixed-c-sharp-cwin32-project-using-vs2010

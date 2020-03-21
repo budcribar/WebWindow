@@ -125,5 +125,10 @@ namespace RemotableWebWindow
         {
             Client.WaitForExit(new IdMessageRequest { Id = id });
         }
+
+        public void NavigateToLocalFile(string path)
+        {
+            Client.NavigateToLocalFile(new FileMessageRequest { Id = id, Path = path });
+        }
     }
 }

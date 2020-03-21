@@ -183,13 +183,15 @@ namespace WebWindows
 
         public void ShowMessage(string title, string body)
         {
-            WebWindow_ShowMessage(_nativeWebWindow, title, body, /* MB_OK */ 0);
+            Invoke(() => WebWindow_ShowMessage(_nativeWebWindow, title, body, /* MB_OK */ 0));
+           
         }
 
         public void Invoke(Action workItem)
         {
             // If we're already on the UI thread, no need to dispatch
-            if (Thread.CurrentThread.ManagedThreadId == _ownerThreadId)
+            //if (Thread.CurrentThread.ManagedThreadId == _ownerThreadId)
+            if (true)
             {
                 workItem();
             }
@@ -221,7 +223,7 @@ namespace WebWindows
 
         public void NavigateToUrl(string url)
         {
-            WebWindow_NavigateToUrl(_nativeWebWindow, url);
+            Invoke(() => WebWindow_NavigateToUrl(_nativeWebWindow, url));
         }
 
         public void NavigateToLocalFile(string path)
@@ -233,17 +235,7 @@ namespace WebWindows
 
         public void SendMessage(string message)
         {
-            // TODO
-            if (Thread.CurrentThread.ManagedThreadId == _ownerThreadId)
-            {
-                WebWindow_SendMessage(_nativeWebWindow, message);
-            }
-            else
-            {
-                WebWindow_Invoke(_nativeWebWindow, () => WebWindow_SendMessage(_nativeWebWindow, message));
-            }
-
-            
+            Invoke(() => WebWindow_SendMessage(_nativeWebWindow, message));
         }
 
         public event EventHandler<string> OnWebMessageReceived;

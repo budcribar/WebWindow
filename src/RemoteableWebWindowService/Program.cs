@@ -5,14 +5,24 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using System.Windows.Forms;
 
 namespace RemoteableWebWindowService
 {
     public class Program
     {
+        public static Form form;
+        [STAThread]
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            form = new Form();
+            form.Visible = false;
+            form.WindowState = FormWindowState.Minimized;
+
+            Task.Run(() => CreateHostBuilder(args).Build().Run());
+
+            Application.Run(form);
+
         }
 
         // Additional configuration is required to successfully run gRPC on macOS.

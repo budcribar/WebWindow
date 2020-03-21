@@ -102,14 +102,19 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_USER_INVOKE:
 	{
 		ACTION callback = (ACTION)wParam;
-		callback();
+		int rc = 0;
+		//try {
+			callback();
+		//}
+		//catch (...) { rc = -1; }
+
 		InvokeWaitInfo* waitInfo = (InvokeWaitInfo*)lParam;
 		{
 			std::lock_guard<std::mutex> guard(invokeLockMutex);
 			waitInfo->isCompleted = true;
 		}
 		waitInfo->completionNotifier.notify_one();
-		return 0;
+		return rc;
 	}
 	case WM_SIZE:
 	{

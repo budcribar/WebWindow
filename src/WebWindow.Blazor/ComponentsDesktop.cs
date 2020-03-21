@@ -54,10 +54,12 @@ namespace WebWindows.Blazor
             try
             {
                 completed.Wait(); // TODO don't we need to wait for th new IPC to finish before trying to navigate?
+                //WebWindow.ShowMessage("Msg", "Hello");
                 WebWindow.NavigateToUrl(BlazorAppScheme + "://app/");
-
-                Thread.Sleep(60 * 60 * 1000);
-                //WebWindow.WaitForExit();//todo
+                //Thread.Sleep(2000);
+                //WebWindow.NavigateToUrl(BlazorAppScheme + "://app/");
+                //Thread.Sleep(60 * 60 * 1000);
+                WebWindow.WaitForExit();//todo
             }
             finally
             {
@@ -140,9 +142,10 @@ namespace WebWindows.Blazor
 
             DesktopJSRuntime = new DesktopJSRuntime(ipc);
             completed.Set();
-            Thread.Sleep(1000);
+            //Thread.Sleep(5000);
+            //var task = PerformHandshakeAsync(ipc);
             await PerformHandshakeAsync(ipc);
-           
+
             AttachJsInterop(ipc, appLifetime);
 
             var serviceCollection = new ServiceCollection();
@@ -172,6 +175,7 @@ namespace WebWindows.Blazor
             {
                 _ = DesktopRenderer.AddComponentAsync(rootComponent.componentType, rootComponent.domElementSelector);
             }
+            //await task;
         }
 
         public static Stream SupplyFrameworkFile(string uri)

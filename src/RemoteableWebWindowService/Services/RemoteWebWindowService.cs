@@ -10,6 +10,9 @@ using WebWindows;
 using System.IO;
 using WebWindows.Blazor;
 using System.Threading;
+using Microsoft.AspNetCore.Components;
+using System.Reactive.Concurrency;
+using System.Text;
 
 namespace RemoteableWebWindowService
 {
@@ -26,6 +29,17 @@ namespace RemoteableWebWindowService
             _webWindowDictionary = webWindowDictionary;
         }
 
+        public Action<WebWindowOptions> HelloWorldOptions()
+        {
+            return (options) =>
+            {
+                options.SchemeHandlers.Add("app", (string url, out string contentType) =>
+                    {
+                        contentType = "text/javascript";
+                        return new MemoryStream(Encoding.UTF8.GetBytes("alert('super')"));
+                    });
+            };
+        }
         public Action<WebWindowOptions> RemoteOptions(string hostHtmlPath)
         {
             return (options) => {
@@ -65,7 +79,10 @@ namespace RemoteableWebWindowService
             if (!_webWindowDictionary.ContainsKey(id))
             {
                 //var webWindow = new WebWindow(request.Title, RemoteOptions(request.HtmlHostPath));
-                var webWindow = new WebWindow(request.Title, ComponentsDesktop.StandardOptions(request.HtmlHostPath));
+                WebWindow webWindow = null;
+               
+                //Program.form.Invoke((Action)(() => { webWindow = new WebWindow(request.Title, ComponentsDesktop.StandardOptions(request.HtmlHostPath)); }));
+                Program.form.Invoke((Action)(() => { webWindow = new WebWindow(request.Title, HelloWorldOptions()); }));
 
                 webWindow.OnWebMessageReceived += async(sender, message) =>
                 {
@@ -136,6 +153,13 @@ namespace RemoteableWebWindowService
         {
             Guid id = Guid.Parse(request.Id);
             _webWindowDictionary[id].SendMessage(request.Message);
+            return Task.FromResult<Empty>(new Empty());
+        }
+
+        public override Task<Empty> NavigateToLocalFile(FileMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+            _webWindowDictionary[id].NavigateToLocalFile(request.Path);
             return Task.FromResult<Empty>(new Empty());
         }
 
