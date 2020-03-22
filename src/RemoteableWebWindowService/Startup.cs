@@ -22,8 +22,8 @@ namespace PeakSwc.RemoteableWebWindows
         {
             services.AddGrpc();
             services.AddSingleton<ConcurrentDictionary<Guid, WebWindow>>();
-            services.AddSingleton<ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>>();
-            services.AddSingleton<BlockingCollection<string>>();
+            services.AddSingleton<ConcurrentDictionary<Guid,ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>>>();
+            services.AddSingleton<BlockingCollection<(Guid,string)>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

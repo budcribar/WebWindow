@@ -15,7 +15,6 @@ namespace PeakSwc.RemoteableWebWindows
         private string windowTitle;
         private string hostHtmlPath;
 
-
         private string id = null;
         private string Id
         {
@@ -71,9 +70,9 @@ namespace PeakSwc.RemoteableWebWindows
                                 if (File.Exists(message.Path))
                                 {
                                     var bytes = File.ReadAllBytes(message.Path);
-                                    await files.RequestStream.WriteAsync(new FileReadRequest { Path = message.Path, Data = ByteString.CopyFrom(bytes) });
+                                    await files.RequestStream.WriteAsync(new FileReadRequest { Id=Id, Path = message.Path, Data = ByteString.CopyFrom(bytes) });
                                 }
-                                else await files.RequestStream.WriteAsync(new FileReadRequest { Path = message.Path });
+                                else await files.RequestStream.WriteAsync(new FileReadRequest { Id=Id, Path = message.Path });
 
                             }
 
@@ -94,11 +93,6 @@ namespace PeakSwc.RemoteableWebWindows
             this.windowTitle = windowTitle;
             this.hostHtmlPath = hostHtmlPath;
             //var c = this.Client; // TODO
-        }
-
-        public void Invoke(Action workItem)
-        {
-            workItem();
         }
 
         public void NavigateToUrl(string url)
