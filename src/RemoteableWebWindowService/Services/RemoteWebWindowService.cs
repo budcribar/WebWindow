@@ -156,9 +156,12 @@ namespace PeakSwc.RemoteableWebWindows
                 tuple.mres.Set();
             }
         }
-        public override Task<Empty> WaitForExit(IdMessageRequest request, ServerCallContext context) {
+        public override Task<Empty> WaitForExit(IdMessageRequest request, ServerCallContext context)
+        {
             Guid id = Guid.Parse(request.Id);
+
             _webWindowDictionary[id].WaitForExit();
+
             Shutdown(id);
             return Task.FromResult<Empty>(new Empty());
         }

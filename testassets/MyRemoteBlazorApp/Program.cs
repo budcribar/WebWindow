@@ -8,9 +8,9 @@ namespace MyRemoteBlazorApp
     {
         static void Main(string[] args)
         {
-            var window = new RemotableWebWindow(new Uri("https://localhost:5001"), "My Remote Blazor App", "wwwroot/index.html");
-            var c = window.Client; // TODO initialized
-            ComponentsDesktop.Run<Startup>(window); // TODO bad namespace name
+            ComponentsDesktop.Run<Startup>(new RemotableWebWindow(new Uri("https://localhost:5001"), "My Remote Blazor App", "wwwroot/index.html"));
+
+            //ComponentsDesktop.Run<Startup>("My Blazor App", "wwwroot/index.html");
         }
     }
 }

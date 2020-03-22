@@ -29,10 +29,9 @@ namespace PeakSwc.RemoteableWebWindows
         private RemoteWebWindow.RemoteWebWindowClient client = null;
         private CancellationTokenSource cts = new CancellationTokenSource();
         public RemoteWebWindow.RemoteWebWindowClient Client {
-            get {
-                lock(cts)
-                // TODO shutdown
-                if (client ==null)
+            get
+            {
+                if (client == null)
                 {
                     var channel = GrpcChannel.ForAddress(uri);
 
@@ -57,28 +56,28 @@ namespace PeakSwc.RemoteableWebWindows
                         }
                         catch (RpcException ex) when (ex.StatusCode == StatusCode.Cancelled)
                         {
-                           
+
                             Console.WriteLine("Stream cancelled.");  //TODO
                         }
-                    });
+                    }, cts.Token);
 
-                        Task.Run(async () =>
+                    Task.Run(async () =>
+                    {
+                        var files = client.FileReader();
+                        await foreach (var message in files.ResponseStream.ReadAllAsync())
                         {
-                            var files = client.FileReader();
-                            await foreach (var message in files.ResponseStream.ReadAllAsync())
+                            if (File.Exists(message.Path))
                             {
-                                if (File.Exists(message.Path))
-                                {
-                                    var bytes = File.ReadAllBytes(message.Path);
-                                    await files.RequestStream.WriteAsync(new FileReadRequest { Id=Id, Path = message.Path, Data = ByteString.CopyFrom(bytes) });
-                                }
-                                else await files.RequestStream.WriteAsync(new FileReadRequest { Id=Id, Path = message.Path });
-
+                                var bytes = File.ReadAllBytes(message.Path);
+                                await files.RequestStream.WriteAsync(new FileReadRequest { Id = Id, Path = message.Path, Data = ByteString.CopyFrom(bytes) });
                             }
+                            else await files.RequestStream.WriteAsync(new FileReadRequest { Id = Id, Path = message.Path });
 
-                        });
+                        }
 
-                        completed.Wait();
+                    },cts.Token);
+
+                    completed.Wait();
 
                 }
                 return client;
@@ -118,6 +117,7 @@ namespace PeakSwc.RemoteableWebWindows
         public void WaitForExit()
         {
             Client.WaitForExit(new IdMessageRequest { Id = id });
+            cts.Cancel();
         }
 
         public void NavigateToLocalFile(string path)
