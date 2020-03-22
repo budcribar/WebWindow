@@ -21,7 +21,7 @@ namespace PeakSwc.RemoteableWebWindows
         private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> _fileDictionary;
         private readonly  BlockingCollection<(Guid, string)> _fileCollection;
 
-        public RemoteWebWindowService(ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, WebWindow> webWindowDictionary, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollection)
+        public RemoteWebWindowService(ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, WebWindow> webWindowDictionary, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollection)
         {
             _logger = logger;
             _webWindowDictionary = webWindowDictionary;
@@ -49,12 +49,12 @@ namespace PeakSwc.RemoteableWebWindows
                 {
                     // TODO: Only intercept for the hostname 'app' and passthrough for others
                     // TODO: Prevent directory traversal?
-                    var appFile = Path.Combine(contentRootAbsolute, new Uri(url).AbsolutePath.Substring(1));
-                    if (appFile == contentRootAbsolute)
-                    {
+                    string appFile = "";
+                    if (Path.Combine(contentRootAbsolute, new Uri(url).AbsolutePath.Substring(1)) == contentRootAbsolute)
                         appFile = hostHtmlPath;
-                    }
-
+                    else
+                        appFile = Path.Combine(Path.GetDirectoryName(hostHtmlPath), new Uri(url.Replace("http", "file")).LocalPath.Substring(6));
+                    
                     contentType = ComponentsDesktop.GetContentType(appFile);
 
                     return ProcessFile(id, appFile);
@@ -62,7 +62,7 @@ namespace PeakSwc.RemoteableWebWindows
 
                 options.SchemeHandlers.Add("file", (string url, out string contentType) =>
                 {
-                    var appFile = new Uri(url).AbsolutePath;
+                    var appFile = new Uri(url).LocalPath;
 
                     contentType = ComponentsDesktop.GetContentType(appFile);
 
@@ -80,20 +80,15 @@ namespace PeakSwc.RemoteableWebWindows
 
         private Stream ProcessFile(Guid id, string appFile)
         {
-            if (_fileDictionary.ContainsKey(id) && _fileDictionary[id].ContainsKey(appFile))
-            {
-                var stream = _fileDictionary[id][appFile].stream;
-                stream.Seek(0, SeekOrigin.Begin);
-                return stream;
-            }
+            
             if (!_fileDictionary.ContainsKey(id))
-                _fileDictionary.TryAdd(id, new ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>());
+                _fileDictionary.TryAdd(id, new ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>());
 
             _fileDictionary[id][appFile] = (null, new ManualResetEventSlim());
             _fileCollection.Add((id,appFile));
 
-            _fileDictionary[id][appFile].mres.Wait();
-            return _fileDictionary[id][appFile].stream;
+            _fileDictionary[id][appFile].Item2.Wait();
+            return _fileDictionary[id][appFile].Item1;
         }
 
         private void Shutdown(Guid id)
@@ -151,9 +146,9 @@ namespace PeakSwc.RemoteableWebWindows
             await foreach (var message in requestStream.ReadAllAsync())
             {
                 Guid id = new Guid(message.Id);
-                var tuple = _fileDictionary[id][message.Path];
-                tuple.stream = new MemoryStream(message.Data.ToArray());
-                tuple.mres.Set();
+
+                _fileDictionary[id][message.Path] = (new MemoryStream(message.Data.ToArray()), _fileDictionary[id][message.Path].mres);
+                _fileDictionary[id][message.Path].mres.Set();
             }
         }
         public override Task<Empty> WaitForExit(IdMessageRequest request, ServerCallContext context)

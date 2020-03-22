@@ -138,8 +138,7 @@ namespace WebWindows.Blazor
 
             DesktopJSRuntime = new DesktopJSRuntime(ipc);
             completed.Set();
-            //Thread.Sleep(5000);
-            //var task = PerformHandshakeAsync(ipc);
+           
             await PerformHandshakeAsync(ipc);
 
             AttachJsInterop(ipc, appLifetime);
@@ -171,7 +170,6 @@ namespace WebWindows.Blazor
             {
                 _ = DesktopRenderer.AddComponentAsync(rootComponent.componentType, rootComponent.domElementSelector);
             }
-            //await task;
         }
 
         public static Stream SupplyFrameworkFile(string uri)
