@@ -6,6 +6,8 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using WebWindows;
 using Google.Protobuf;
+using System.Drawing;
+using System.Collections.Generic;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -84,7 +86,25 @@ namespace PeakSwc.RemoteableWebWindows
             }
         }
 
+        public int Height { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int Left { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Point Location { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public IReadOnlyList<WebWindows.Monitor> Monitors => throw new NotImplementedException();
+
+        public bool Resizable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public uint ScreenDpi => throw new NotImplementedException();
+
+        public Size Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Title { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int Top { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool Topmost { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int Width { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public event EventHandler<string> OnWebMessageReceived;
+        public event EventHandler<Point> LocationChanged;
+        public event EventHandler<Size> SizeChanged;
 
         public RemotableWebWindow(Uri uri, string windowTitle, string hostHtmlPath)
         {
@@ -126,6 +146,16 @@ namespace PeakSwc.RemoteableWebWindows
             var url = new Uri(absolutePath, UriKind.Absolute);
             Client.NavigateToUrl(new UrlMessageRequest { Id = Id, Url = url.ToString() });
            
+        }
+
+        public void SetIconFile(string filename)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void NavigateToString(string content)
+        {
+            throw new NotImplementedException();
         }
     }
 }
