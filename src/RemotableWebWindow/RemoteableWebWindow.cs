@@ -9,6 +9,7 @@ using Google.Protobuf;
 using System.Drawing;
 using System.Collections.Generic;
 
+
 namespace PeakSwc.RemoteableWebWindows
 {
     public class RemotableWebWindow : IWebWindow
@@ -53,7 +54,7 @@ namespace PeakSwc.RemoteableWebWindows
                                     completed.Set();
                                 }
                                 else
-                                    OnWebMessageReceived?.Invoke(null, message.Message);
+                                    OnWebMessageReceived?.Invoke(null, message.Response);
                             }
                         }
                         catch (RpcException ex) when (ex.StatusCode == StatusCode.Cancelled)
@@ -86,22 +87,39 @@ namespace PeakSwc.RemoteableWebWindows
             }
         }
 
-        public int Height { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int Left { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Point Location { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int Height { get => Client.GetHeight(new IdMessageRequest { Id = Id }).Response; set => Client.SetHeight(new IntMessageRequest {  Id=Id, Message = value }); }
+        public int Left { get => Client.GetLeft(new IdMessageRequest { Id = Id }).Response; set => Client.SetLeft(new IntMessageRequest { Id=Id, Message = value }); }
+        public Point Location { get { var l = Client.GetLocation(new IdMessageRequest { Id = Id }); return new Point(l.X, l.Y); } set => Client.SetLocation(new PointMessageRequest { Id=Id, X=value.X, Y=value.Y }); }
 
-        public IReadOnlyList<WebWindows.Monitor> Monitors => throw new NotImplementedException();
 
-        public bool Resizable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public IReadOnlyList<WebWindows.Monitor> Monitors
+        {
+            get
+            {
+                List<WebWindows.Monitor> results = new List<WebWindows.Monitor>();
+                var monitors = Client.GetMonitors(new IdMessageRequest { Id = Id });
+                foreach (var m in monitors.Instances)
+                    results.Add(new WebWindows.Monitor(new Rectangle { X = m.MonitorArea.X, Y = m.MonitorArea.Y, Width = m.MonitorArea.Width, Height = m.MonitorArea.Height }, new Rectangle { X = m.WorkArea.X, Y = m.WorkArea.Y, Width = m.WorkArea.Width, Height = m.WorkArea.Height }));
+                return results;
+            }
+        }
 
-        public uint ScreenDpi => throw new NotImplementedException();
+        public bool Resizable { get => Client.GetResizable(new IdMessageRequest { Id = Id }).Response; set => Client.SetResizable(new BoolRequest { Id = Id, Request = value }); }
 
-        public Size Size { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Title { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int Top { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool Topmost { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int Width { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public uint ScreenDpi { get => Client.GetScreenDpi(new IdMessageRequest { Id = Id }).Response; }
 
+        public Size Size { get { var l = Client.GetSize(new IdMessageRequest { Id = Id }); return new Size(l.Width, l.Height); } set => Client.SetSize(new SizeMessageRequest { Id = Id, Width = value.Width, Height = value.Height }); }
+
+        public string Title { get => Client.GetTitle(new IdMessageRequest { Id = Id }).Response; set => Client.SetTitle(new StringRequest { Id = Id, Request = value }); }
+
+        public int Top { get => Client.GetTop(new IdMessageRequest { Id = Id }).Response; set => Client.SetTop(new IntMessageRequest { Id = Id, Message = value }); } 
+       
+
+        public bool Topmost { get => Client.GetTopmost(new IdMessageRequest { Id = Id }).Response; set => Client.SetTopmost(new BoolRequest { Id = Id, Request = value }); }
+
+
+        public int Width { get => Client.GetWidth(new IdMessageRequest { Id = Id }).Response; set => Client.SetWidth(new IntMessageRequest { Id = Id, Message = value }); }
+      
         public event EventHandler<string> OnWebMessageReceived;
         public event EventHandler<Point> LocationChanged;
         public event EventHandler<Size> SizeChanged;
@@ -111,7 +129,6 @@ namespace PeakSwc.RemoteableWebWindows
             this.uri = uri;
             this.windowTitle = windowTitle;
             this.hostHtmlPath = hostHtmlPath;
-            //var c = this.Client; // TODO
         }
 
         public void NavigateToUrl(string url)

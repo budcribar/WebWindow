@@ -1,3 +1,6 @@
+
+// TODO: Review style guidelines
+
 syntax = "proto3";
 
 import "google/protobuf/empty.proto";
@@ -35,7 +38,37 @@ message CreateWebWindowRequest {
 }
 
 message WebMessageResponse {
-    string message = 1;
+    string response = 1;
+}
+
+message IntMessageResponse {
+    int32 response = 1;
+}
+
+message IntMessageRequest {
+    string id = 1;
+    int32 message = 2;
+}
+
+message PointMessageRequest {
+    string id = 1;
+    int32 x = 2;
+    int32 y = 3;
+}
+message PointMessageResponse {
+    int32 x = 1;
+    int32 y = 2;
+}
+
+message SizeMessageResponse {
+    int32 height = 1;
+    int32 width = 2;
+}
+
+message SizeMessageRequest {
+    string id = 1;
+    int32 height = 2;
+    int32 width = 3;
 }
 
 message FileReadRequest {
@@ -48,13 +81,87 @@ message FileReadResponse {
     string path = 2;   
 }
 
+message RectangleResponse {
+    int32 x = 1;
+    int32 y = 2;
+    int32 width = 3;
+    int32 height = 4;
+}
+
+message BoolResponse {
+    bool response = 1; 
+}
+
+message StringResponse {
+    string response = 1; 
+}
+
+message StringRequest {
+    string id = 1;
+    string request = 2; 
+}
+
+message BoolRequest {
+    string id = 1;
+    bool request = 2;
+}
+
+message MonitorResponse {
+    message Instance {
+        RectangleResponse monitorArea = 1;
+        RectangleResponse workArea = 2;
+	}
+    repeated Instance instances = 1;
+}
+
+message UInt32Response {
+    uint32 response = 1;
+}
+
 service RemoteWebWindow {
-    rpc CreateWebWindow(CreateWebWindowRequest) returns (stream WebMessageResponse);
-    rpc FileReader(stream FileReadRequest) returns (stream FileReadResponse);
-    rpc NavigateToUrl(UrlMessageRequest) returns (google.protobuf.Empty);
+    rpc GetHeight(IdMessageRequest) returns (IntMessageResponse);
+    rpc SetHeight(IntMessageRequest) returns (google.protobuf.Empty);
+
+    rpc GetLeft(IdMessageRequest) returns (IntMessageResponse);
+    rpc SetLeft(IntMessageRequest) returns (google.protobuf.Empty);
+
+    rpc GetLocation(IdMessageRequest) returns (PointMessageResponse);
+    rpc SetLocation(PointMessageRequest) returns (google.protobuf.Empty);
+
+    rpc GetMonitors(IdMessageRequest) returns (MonitorResponse);
+    
+    rpc GetResizable(IdMessageRequest) returns (BoolResponse);
+    rpc SetResizable(BoolRequest) returns (google.protobuf.Empty);
+
+    rpc GetScreenDpi(IdMessageRequest) returns (UInt32Response);
+
+     rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty); 
+     rpc SetIconFile(SendMessageRequest) returns (google.protobuf.Empty); 
+
+     rpc Show (IdMessageRequest) returns (google.protobuf.Empty);
+     rpc ShowMessage(ShowMessageRequest) returns (google.protobuf.Empty);
+
+     rpc GetSize(IdMessageRequest) returns (SizeMessageResponse);
+     rpc SetSize(SizeMessageRequest) returns (google.protobuf.Empty);  
+
+     rpc GetTitle(IdMessageRequest) returns (StringResponse);
+     rpc SetTitle(StringRequest) returns (google.protobuf.Empty);
+
+    rpc GetTop(IdMessageRequest) returns (IntMessageResponse);
+    rpc SetTop(IntMessageRequest) returns (google.protobuf.Empty);
+
+    rpc GetTopmost(IdMessageRequest) returns (BoolResponse);
+    rpc SetTopmost(BoolRequest) returns (google.protobuf.Empty);
+
     rpc NavigateToLocalFile(FileMessageRequest) returns (google.protobuf.Empty);
-    rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty); 
-    rpc Show (IdMessageRequest) returns (google.protobuf.Empty);
-    rpc ShowMessage(ShowMessageRequest) returns (google.protobuf.Empty);
+    rpc NavigateToString(StringRequest) returns (google.protobuf.Empty);
+    rpc NavigateToUrl(UrlMessageRequest) returns (google.protobuf.Empty);
+
     rpc WaitForExit(IdMessageRequest) returns (google.protobuf.Empty);
+
+    rpc GetWidth(IdMessageRequest) returns (IntMessageResponse);
+    rpc SetWidth(IntMessageRequest) returns (google.protobuf.Empty);
+
+    rpc CreateWebWindow(CreateWebWindowRequest) returns (stream WebMessageResponse);
+    rpc FileReader(stream FileReadRequest) returns (stream FileReadResponse);  
 }

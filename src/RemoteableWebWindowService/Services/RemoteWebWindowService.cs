@@ -11,6 +11,7 @@ using System.IO;
 using WebWindows.Blazor;
 using System.Threading;
 using System.Text;
+using System.Drawing;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -113,12 +114,12 @@ namespace PeakSwc.RemoteableWebWindows
                 {
                     //if (!context.CancellationToken.IsCancellationRequested)  //TODO cancellationtoken is null
                     //lock (responseStream)
-                        await responseStream.WriteAsync(new WebMessageResponse { Message = message });
+                        await responseStream.WriteAsync(new WebMessageResponse { Response = message });
                 };
 
                 _webWindowDictionary.TryAdd(id, webWindow);
 
-                await responseStream.WriteAsync(new WebMessageResponse { Message = "Web Window has been created" });
+                await responseStream.WriteAsync(new WebMessageResponse { Response = "Web Window has been created" });
 
                 while (!context.CancellationToken.IsCancellationRequested)
                 {
@@ -197,5 +198,154 @@ namespace PeakSwc.RemoteableWebWindows
             return Task.FromResult<Empty>(new Empty());
         }
 
+        public override Task<IntMessageResponse> GetHeight(IdMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+            
+            return Task.FromResult(new IntMessageResponse { Response = _webWindowDictionary[id].Height });       
+        }
+
+        public override Task<IntMessageResponse> GetLeft(IdMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+
+            return Task.FromResult(new IntMessageResponse { Response = _webWindowDictionary[id].Left });
+        }
+
+        public override Task<PointMessageResponse> GetLocation(IdMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+            Point l = _webWindowDictionary[id].Location;
+            return Task.FromResult(new PointMessageResponse { X=l.X, Y=l.Y  });
+        }
+
+        public override Task<MonitorResponse> GetMonitors(IdMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+            var monitors = _webWindowDictionary[id].Monitors;
+            var response = new MonitorResponse();
+            foreach (var m in monitors)
+                response.Instances.Add(new MonitorResponse.Types.Instance { MonitorArea = new RectangleResponse { Height=m.MonitorArea.Height, Width=m.MonitorArea.Width, X=m.MonitorArea.X, Y=m.MonitorArea.Y }, WorkArea = new RectangleResponse { Height = m.WorkArea.Height, Width = m.WorkArea.Width, X = m.WorkArea.X, Y = m.WorkArea.Y } });
+
+            return Task.FromResult(response);
+        }
+
+        public override Task<BoolResponse> GetResizable(IdMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+
+            return Task.FromResult(new BoolResponse {  Response = _webWindowDictionary[id].Resizable });
+        }
+
+        public override Task<UInt32Response> GetScreenDpi(IdMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+
+            return Task.FromResult(new UInt32Response {  Response = _webWindowDictionary[id].ScreenDpi });       
+        }
+
+        public override Task<SizeMessageResponse> GetSize(IdMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+            Size s = _webWindowDictionary[id].Size;
+            return Task.FromResult(new SizeMessageResponse {  Height=s.Height, Width=s.Width });
+        }
+
+        public override Task<StringResponse> GetTitle(IdMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+
+            return Task.FromResult(new StringResponse { Response = _webWindowDictionary[id].Title });
+        }
+
+        public override Task<IntMessageResponse> GetTop(IdMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+
+            return Task.FromResult(new IntMessageResponse { Response = _webWindowDictionary[id].Top });
+        }
+
+        public override Task<BoolResponse> GetTopmost(IdMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+
+            return Task.FromResult(new BoolResponse { Response = _webWindowDictionary[id].Topmost });
+        }
+
+        public override Task<IntMessageResponse> GetWidth(IdMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+
+            return Task.FromResult(new IntMessageResponse { Response = _webWindowDictionary[id].Width });
+        }
+        public override Task<Empty> NavigateToString(StringRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+            _webWindowDictionary[id].NavigateToString(request.Request);
+            return Task.FromResult<Empty>(new Empty());
+        }
+
+        public override Task<Empty> SetHeight(IntMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+            _webWindowDictionary[id].Height = request.Message;
+            return Task.FromResult<Empty>(new Empty());
+        }
+
+        public override Task<Empty> SetIconFile(SendMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+            _webWindowDictionary[id].SetIconFile(request.Message);
+            return Task.FromResult<Empty>(new Empty());
+        }
+
+        public override Task<Empty> SetLeft(IntMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+            _webWindowDictionary[id].Left = request.Message;
+            return Task.FromResult<Empty>(new Empty());
+        }
+        public override Task<Empty> SetLocation(PointMessageRequest request, ServerCallContext context)
+        {        
+            Guid id = Guid.Parse(request.Id);
+            _webWindowDictionary[id].Location = new Point(request.X, request.Y);
+            return Task.FromResult<Empty>(new Empty());
+        }
+        public override Task<Empty> SetResizable(BoolRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+            _webWindowDictionary[id].Resizable = request.Request;
+            return Task.FromResult<Empty>(new Empty());
+        }
+        public override Task<Empty> SetSize(SizeMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+            _webWindowDictionary[id].Size = new Size(request.Width, request.Height);
+            return Task.FromResult<Empty>(new Empty());
+        }
+        public override Task<Empty> SetTitle(StringRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+            _webWindowDictionary[id].Title = request.Request;
+            return Task.FromResult<Empty>(new Empty());
+        }
+        public override Task<Empty> SetTop(IntMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+            _webWindowDictionary[id].Top = request.Message;
+            return Task.FromResult<Empty>(new Empty());
+        }
+        public override Task<Empty> SetTopmost(BoolRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+            _webWindowDictionary[id].Topmost = request.Request;
+            return Task.FromResult<Empty>(new Empty());
+        }
+        public override Task<Empty> SetWidth(IntMessageRequest request, ServerCallContext context)
+        {
+            Guid id = Guid.Parse(request.Id);
+            _webWindowDictionary[id].Width = request.Message;
+            return Task.FromResult<Empty>(new Empty());
+        }
     }
 }
