@@ -7,3 +7,4 @@ Debug/
 Release/
 packages/
 artifacts/
+/testassets/MyRemoteBlazorApp/publish
