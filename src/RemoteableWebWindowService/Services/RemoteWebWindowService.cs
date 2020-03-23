@@ -12,6 +12,7 @@ using WebWindows.Blazor;
 using System.Threading;
 using System.Text;
 using System.Drawing;
+using Newtonsoft.Json;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -114,12 +115,22 @@ namespace PeakSwc.RemoteableWebWindows
                 {
                     //if (!context.CancellationToken.IsCancellationRequested)  //TODO cancellationtoken is null
                     //lock (responseStream)
-                        await responseStream.WriteAsync(new WebMessageResponse { Response = message });
+                        await responseStream.WriteAsync(new WebMessageResponse { Response = "webmessage:" + message });
+                };
+
+                webWindow.LocationChanged += async (sender, point) =>
+                {
+                    await responseStream.WriteAsync(new WebMessageResponse { Response = "location:" + JsonConvert.SerializeObject(point) });
+                };
+
+                webWindow.SizeChanged += async (sender, size) =>
+                {
+                    await responseStream.WriteAsync(new WebMessageResponse { Response = "size:" + JsonConvert.SerializeObject(size) }); ;
                 };
 
                 _webWindowDictionary.TryAdd(id, webWindow);
 
-                await responseStream.WriteAsync(new WebMessageResponse { Response = "Web Window has been created" });
+                await responseStream.WriteAsync(new WebMessageResponse { Response = "created:" });
 
                 while (!context.CancellationToken.IsCancellationRequested)
                 {

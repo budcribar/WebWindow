@@ -8,7 +8,7 @@ using WebWindows;
 using Google.Protobuf;
 using System.Drawing;
 using System.Collections.Generic;
-
+using Newtonsoft.Json;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -48,13 +48,25 @@ namespace PeakSwc.RemoteableWebWindows
                         {
                             await foreach (var message in events.ResponseStream.ReadAllAsync())
                             {
-                                if (first)
+                                var command = message.Response.Split(':')[0];
+                                var data = message.Response.Substring(message.Response.IndexOf(':')+1);
+
+                                switch (command)
                                 {
-                                    first = false;
-                                    completed.Set();
+                                    case "created": 
+                                        completed.Set();
+                                        break;
+                                    case "webmessage":
+                                        OnWebMessageReceived?.Invoke(null, data);
+                                        break;
+                                    case "location":
+                                        LocationChanged?.Invoke(null, JsonConvert.DeserializeObject<Point>( data));
+                                        break;
+                                    case "size":
+                                        SizeChanged?.Invoke(null, JsonConvert.DeserializeObject<Size>(data));
+                                        break;
                                 }
-                                else
-                                    OnWebMessageReceived?.Invoke(null, message.Response);
+                                                               
                             }
                         }
                         catch (RpcException ex) when (ex.StatusCode == StatusCode.Cancelled)
@@ -104,7 +116,8 @@ namespace PeakSwc.RemoteableWebWindows
             }
         }
 
-        public bool Resizable { get => Client.GetResizable(new IdMessageRequest { Id = Id }).Response; set => Client.SetResizable(new BoolRequest { Id = Id, Request = value }); }
+        public bool Resizable { get => Client.GetResizable(new IdMessageRequest { Id = Id }).Response; 
+            set => Client.SetResizable(new BoolRequest { Id = Id, Request = value }); }
 
         public uint ScreenDpi { get => Client.GetScreenDpi(new IdMessageRequest { Id = Id }).Response; }
 
@@ -115,7 +128,8 @@ namespace PeakSwc.RemoteableWebWindows
         public int Top { get => Client.GetTop(new IdMessageRequest { Id = Id }).Response; set => Client.SetTop(new IntMessageRequest { Id = Id, Message = value }); } 
        
 
-        public bool Topmost { get => Client.GetTopmost(new IdMessageRequest { Id = Id }).Response; set => Client.SetTopmost(new BoolRequest { Id = Id, Request = value }); }
+        public bool Topmost { get => Client.GetTopmost(new IdMessageRequest { Id = Id }).Response; 
+            set => Client.SetTopmost(new BoolRequest { Id = Id, Request = value }); }
 
 
         public int Width { get => Client.GetWidth(new IdMessageRequest { Id = Id }).Response; set => Client.SetWidth(new IntMessageRequest { Id = Id, Message = value }); }
