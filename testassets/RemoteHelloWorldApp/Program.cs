@@ -11,6 +11,8 @@ namespace RemoteHelloWorldApp
         static void Main(string[] args)
         {
             var window = new RemotableWebWindow(new Uri("https://localhost:5001"), "My Remote Blazor App", "wwwroot/index.html");
+
+            //var window = new RemotableWebWindow(new Uri("https://localhost:443"), "My Remote Blazor App", "wwwroot/index.html");
          
             window.OnWebMessageReceived += (sender, message) =>
             {

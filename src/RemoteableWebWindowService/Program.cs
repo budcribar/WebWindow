@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System.Windows.Forms;
+using System.Net;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -31,6 +32,10 @@ namespace PeakSwc.RemoteableWebWindows
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.ConfigureKestrel(options => {
+                        //options.Listen(IPAddress.Loopback, 80);
+                        //options.Listen(IPAddress.Parse( "13.64.108.0"), 443, listenOptions => { listenOptions.UseHttps(); });
+                    });
                     webBuilder.UseStartup<Startup>();
                 });
     }
