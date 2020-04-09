@@ -15,9 +15,11 @@ namespace PeakSwc.RemoteableWebWindows
         [STAThread]
         public static void Main(string[] args)
         {
-            form = new Form();
-            form.Visible = false;
-            form.WindowState = FormWindowState.Minimized;
+            form = new Form
+            {
+                Visible = false,
+                WindowState = FormWindowState.Minimized
+            };
 
             Task.Run(() => CreateHostBuilder(args).Build().Run());
 

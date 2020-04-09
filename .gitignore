@@ -8,3 +8,5 @@ Release/
 packages/
 artifacts/
 /testassets/MyRemoteBlazorApp/publish
+/src/RemoteableWebWindowService/publish/RemoteableWebWindowService.exe
+/src/RemoteableWebWindowService/publish/RemoteableWebWindowService.pdb

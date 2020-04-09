@@ -95,7 +95,7 @@ namespace PeakSwc.RemoteableWebWindows
 
         private void Shutdown(Guid id)
         {
-            _webWindowDictionary.Remove(id, out var ww);
+            _webWindowDictionary.Remove(id, out var _);
             // TODO dispose ww
             _fileDictionary.Remove(id, out _);    
         }
