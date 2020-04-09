@@ -9,6 +9,8 @@ namespace MyRemoteBlazorApp
         static void Main(string[] args)
         {
             ComponentsDesktop.Run<Startup>(new RemotableWebWindow(new Uri("https://localhost:5001"), "My Remote Blazor App", "wwwroot/index.html"));
+            
+            //ComponentsDesktop.Run<Startup>(new RemotableWebWindow(new Uri("https://webserverstransporter.com:443"), "My Remote Blazor App", "wwwroot/index.html"));
 
             //ComponentsDesktop.Run<Startup>("My Blazor App", "wwwroot/index.html");
         }

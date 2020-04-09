@@ -10,3 +10,5 @@ artifacts/
 /testassets/MyRemoteBlazorApp/publish
 /src/RemoteableWebWindowService/publish/RemoteableWebWindowService.exe
 /src/RemoteableWebWindowService/publish/RemoteableWebWindowService.pdb
+/src/RemoteableWebWindowService/publish
+/src/RemoteableWebWindowService/publish.zip
