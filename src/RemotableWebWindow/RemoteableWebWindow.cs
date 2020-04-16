@@ -179,6 +179,7 @@ namespace PeakSwc.RemoteableWebWindows
            
         }
 
+        // TODO
         public void SetIconFile(string filename)
         {
             Client.SetIconFile(new SendMessageRequest { Id = Id, Message = filename });
