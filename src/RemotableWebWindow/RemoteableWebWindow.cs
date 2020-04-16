@@ -179,14 +179,15 @@ namespace PeakSwc.RemoteableWebWindows
            
         }
 
+        // TODO
         public void SetIconFile(string filename)
         {
-            throw new NotImplementedException();
+            Client.SetIconFile(new SendMessageRequest { Id = Id, Message = filename });
         }
 
         public void NavigateToString(string content)
         {
-            throw new NotImplementedException();
+            Client.NavigateToString(new StringRequest { Id = Id, Request = content });
         }
     }
 }
