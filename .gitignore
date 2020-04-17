@@ -11,3 +11,5 @@ artifacts/
 /src/RemoteableWebWindowService/publish/RemoteableWebWindowService.pdb
 /src/RemoteableWebWindowService/publish/RemoteableWebWindowService.exe.WebView2/EBWebView
 /src/RemoteableWebWindowService/publish/RemoteableWebWindowService.exe
+/src/RemoteableWebWindowService/publish
+/src/RemoteableWebWindowService/publish.zip
