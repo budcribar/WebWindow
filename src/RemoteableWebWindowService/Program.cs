@@ -20,8 +20,13 @@ namespace PeakSwc.RemoteableWebWindows
             form.Visible = false;
             form.WindowState = FormWindowState.Minimized;
 
+            var ww = new webwindow(new Uri("https://localhost:443"), new Uri("https://localhost:5001"));
+            ww.Start();
+
+
             Task.Run(() => CreateHostBuilder(args).Build().Run());
 
+           
             Application.Run(form);
 
         }
