@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WebWindow.Blazor\WebWindow.Blazor.csproj" />
+    <ProjectReference Include="..\WebWindow.Native\WebWindow.Native.vcxproj" />
     <ProjectReference Include="..\WebWindow\WebWindow.csproj" />
   </ItemGroup>
 
