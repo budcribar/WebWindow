@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <Description>ASP.NET Core static files middleware. Includes middleware for serving static files, directory browsing, and default files.</Description>
@@ -9,6 +9,8 @@
    
     <IsPackable>false</IsPackable>
     <OutputType>Library</OutputType>
+    <AssemblyName>PeakSwc.Microsoft.AspNetCore.StaticFiles</AssemblyName>
+    <RootNamespace>PeakSwc.Microsoft.AspNetCore.StaticFiles</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

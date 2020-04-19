@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 //using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Options;
-using PeakSWC.Microsoft.AspNetCore.StaticFiles;
+using PeakSwc.Microsoft.AspNetCore.StaticFiles;
 
-namespace PeakSWC.Microsoft.AspNetCore.Builder
+namespace PeakSwc.Microsoft.AspNetCore.Builder
 {
     /// <summary>
     /// Extension methods for the DefaultFilesMiddleware

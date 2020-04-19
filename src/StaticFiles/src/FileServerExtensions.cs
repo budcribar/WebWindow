@@ -6,7 +6,7 @@ using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 
-namespace PeakSWC.Microsoft.AspNetCore.Builder
+namespace PeakSwc.Microsoft.AspNetCore.Builder
 {
     /// <summary>
     /// Extension methods that combine all of the static file middleware components:

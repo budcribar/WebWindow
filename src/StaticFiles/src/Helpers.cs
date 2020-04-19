@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Net.Http.Headers;
 
-namespace PeakSWC.Microsoft.AspNetCore.StaticFiles
+namespace PeakSwc.Microsoft.AspNetCore.StaticFiles
 {
     internal static class Helpers
     {

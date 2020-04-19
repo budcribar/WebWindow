@@ -5,13 +5,17 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+//using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RemoteableWebWindowService;
 using WebWindows;
+using PeakSwc.Microsoft.AspNetCore.StaticFiles;
+using PeakSwc.Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
+using StaticFileOptions = PeakSwc.Microsoft.AspNetCore.Builder.StaticFileOptions;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -39,14 +43,15 @@ namespace PeakSwc.RemoteableWebWindows
 
             app.UseRouting();
 
-            //app.UseStaticFiles(new StaticFileOptions
-            //{
-            //    OnPrepareResponse = (context) => {
-            //        var c = context.File;
-            //    },
-            //    FileProvider = new FileResolver(fileDictionary, fileCollection)
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = (context) =>
+                {
+                    var c = context.File;
+                },
+                FileProvider = new FileResolver(fileDictionary, fileCollection)
 
-            //});
+            });
 
             app.UseEndpoints(endpoints =>
             {

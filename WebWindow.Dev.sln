@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RemotableWebWindow", "src\R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RemoteHelloWorldApp", "testassets\RemoteHelloWorldApp\RemoteHelloWorldApp.csproj", "{87513D00-4622-4E12-9F00-D7D6EA4853EE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.AspNetCore.StaticFiles", "src\StaticFiles\src\Microsoft.AspNetCore.StaticFiles.csproj", "{310F9564-831E-4381-A8E3-B800E3C30627}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeakSwc.Microsoft.AspNetCore.StaticFiles", "src\StaticFiles\src\PeakSwc.Microsoft.AspNetCore.StaticFiles.csproj", "{310F9564-831E-4381-A8E3-B800E3C30627}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

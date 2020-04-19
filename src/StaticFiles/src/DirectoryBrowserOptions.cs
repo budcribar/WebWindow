@@ -1,10 +1,10 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using PeakSWC.Microsoft.AspNetCore.StaticFiles.Infrastructure;
-using PeakSWC.Microsoft.AspNetCore.StaticFiles;
+using PeakSwc.Microsoft.AspNetCore.StaticFiles.Infrastructure;
+using PeakSwc.Microsoft.AspNetCore.StaticFiles;
 
-namespace PeakSWC.Microsoft.AspNetCore.Builder
+namespace PeakSwc.Microsoft.AspNetCore.Builder
 {
     /// <summary>
     /// Directory browsing options

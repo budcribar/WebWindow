@@ -3,10 +3,10 @@
 
 using System;
 using Microsoft.AspNetCore.Http.Features;
-using PeakSWC.Microsoft.AspNetCore.StaticFiles;
-using PeakSWC.Microsoft.AspNetCore.StaticFiles.Infrastructure;
+using PeakSwc.Microsoft.AspNetCore.StaticFiles;
+using PeakSwc.Microsoft.AspNetCore.StaticFiles.Infrastructure;
 
-namespace PeakSWC.Microsoft.AspNetCore.Builder
+namespace PeakSwc.Microsoft.AspNetCore.Builder
 {
     /// <summary>
     /// Options for serving static files

@@ -3,13 +3,13 @@
 
 using System;
 using System.Threading.Tasks;
-using PeakSWC.Microsoft.AspNetCore.Builder;
+using PeakSwc.Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 
-namespace PeakSWC.Microsoft.AspNetCore.StaticFiles
+namespace PeakSwc.Microsoft.AspNetCore.StaticFiles
 {
     /// <summary>
     /// This examines a directory path and determines if there is a default file present.

@@ -4,7 +4,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace PeakSWC.Microsoft.Extensions.DependencyInjection
+namespace PeakSwc.Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
     /// Extension methods for adding directory browser services.
