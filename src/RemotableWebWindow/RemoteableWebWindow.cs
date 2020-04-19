@@ -14,9 +14,9 @@ namespace PeakSwc.RemoteableWebWindows
 {
     public class RemotableWebWindow : IWebWindow
     {
-        private Uri uri;
-        private string windowTitle;
-        private string hostHtmlPath;
+        private readonly Uri uri;
+        private readonly string windowTitle;
+        private readonly string hostHtmlPath;
 
         private string id = null;
         private string Id
@@ -30,7 +30,7 @@ namespace PeakSwc.RemoteableWebWindows
             }
         }
         private RemoteWebWindow.RemoteWebWindowClient client = null;
-        private CancellationTokenSource cts = new CancellationTokenSource();
+        private readonly CancellationTokenSource cts = new CancellationTokenSource();
         public RemoteWebWindow.RemoteWebWindowClient Client {
             get
             {
