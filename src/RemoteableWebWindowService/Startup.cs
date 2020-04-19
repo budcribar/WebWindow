@@ -17,8 +17,8 @@ namespace PeakSwc.RemoteableWebWindows
 {
     public class Startup
     {
-        ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> fileDictionary = new ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>>();
-        BlockingCollection<(Guid, string)> fileCollection = new BlockingCollection<(Guid, string)>();
+        private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> fileDictionary = new ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>>();
+        private readonly BlockingCollection<(Guid, string)> fileCollection = new BlockingCollection<(Guid, string)>();
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
