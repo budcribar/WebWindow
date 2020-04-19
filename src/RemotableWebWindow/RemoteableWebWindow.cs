@@ -41,7 +41,7 @@ namespace PeakSwc.RemoteableWebWindows
                     client = new RemoteWebWindow.RemoteWebWindowClient(channel);
                     var events = client.CreateWebWindow(new CreateWebWindowRequest { Id = Id, HtmlHostPath = hostHtmlPath, Title = windowTitle }, cancellationToken: cts.Token); // TODO parameter names
                     var completed = new ManualResetEventSlim();
-                    var first = true;
+                   
                     Task.Run(async () =>
                     {
                         try

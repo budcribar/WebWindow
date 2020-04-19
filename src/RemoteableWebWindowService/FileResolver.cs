@@ -13,7 +13,7 @@ namespace RemoteableWebWindowService
     {
         private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> _fileDictionary;
         private readonly BlockingCollection<(Guid, string)> _fileCollection;
-        string path;
+        private readonly string path;
         Stream stream = null;
 
         private Stream GetStream()
@@ -57,8 +57,8 @@ namespace RemoteableWebWindowService
             _fileDictionary[id][appFile] = (null, new ManualResetEventSlim());
             _fileCollection.Add((id, appFile));
 
-            _fileDictionary[id][appFile].Item2.Wait();
-            return _fileDictionary[id][appFile].Item1;
+            _fileDictionary[id][appFile].mres.Wait();
+            return _fileDictionary[id][appFile].stream;
         }
 
 

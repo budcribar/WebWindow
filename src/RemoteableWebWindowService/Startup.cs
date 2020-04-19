@@ -39,14 +39,14 @@ namespace PeakSwc.RemoteableWebWindows
 
             app.UseRouting();
 
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                OnPrepareResponse = (context) => {
-                    var c = context.File;
-                },
-                FileProvider = new FileResolver(fileDictionary, fileCollection)
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    OnPrepareResponse = (context) => {
+            //        var c = context.File;
+            //    },
+            //    FileProvider = new FileResolver(fileDictionary, fileCollection)
 
-            });
+            //});
 
             app.UseEndpoints(endpoints =>
             {

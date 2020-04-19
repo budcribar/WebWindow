@@ -16,12 +16,14 @@ namespace PeakSwc.RemoteableWebWindows
         [STAThread]
         public static void Main(string[] args)
         {
-            form = new Form();
-            form.Visible = false;
-            form.WindowState = FormWindowState.Minimized;
+            form = new Form
+            {
+                Visible = false,
+                WindowState = FormWindowState.Minimized
+            };
 
-            var ww = new webwindow(new Uri("https://localhost:443"), new Uri("https://localhost:5001"));
-            ww.Start();
+            //var ww = new webwindow(new Uri("https://localhost:443"), new Uri("https://localhost:5001"));
+            //ww.Start();
 
 
             Task.Run(() => CreateHostBuilder(args).Build().Run());
@@ -40,6 +42,7 @@ namespace PeakSwc.RemoteableWebWindows
                     webBuilder.ConfigureKestrel(options => {
                         //options.Listen(IPAddress.Loopback, 80);
                         //options.Listen(IPAddress.Parse( "13.64.108.0"), 443, listenOptions => { listenOptions.UseHttps(); });
+                        options.Listen(IPAddress.Loopback, 443, listenOptions => { listenOptions.UseHttps(); });
                     });
                     webBuilder.UseStartup<Startup>();
                 });

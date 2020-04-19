@@ -62,14 +62,14 @@ namespace PeakSwc.RemoteableWebWindows
                     return ProcessFile(id, appFile);
                 });
 
-                //options.SchemeHandlers.Add("file", (string url, out string contentType) =>
-                //{
-                //    var appFile = new Uri(url).LocalPath;
+                options.SchemeHandlers.Add("file", (string url, out string contentType) =>
+                {
+                    var appFile = new Uri(url).LocalPath;
 
-                //    contentType = ComponentsDesktop.GetContentType(appFile);
+                    contentType = ComponentsDesktop.GetContentType(appFile);
 
-                //    //return ProcessFile(id, appFile);
-                //});
+                    return ProcessFile(id, appFile);
+                });
 
                 // framework:// is resolved as embedded resources
                 options.SchemeHandlers.Add("framework", (string url, out string contentType) =>
@@ -89,8 +89,8 @@ namespace PeakSwc.RemoteableWebWindows
             _fileDictionary[id][appFile] = (null, new ManualResetEventSlim());
             _fileCollection.Add((id,appFile));
 
-            _fileDictionary[id][appFile].Item2.Wait();
-            return _fileDictionary[id][appFile].Item1;
+            _fileDictionary[id][appFile].mres.Wait();
+            return _fileDictionary[id][appFile].stream;
         }
 
         private void Shutdown(Guid id)
