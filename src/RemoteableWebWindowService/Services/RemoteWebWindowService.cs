@@ -105,11 +105,10 @@ namespace PeakSwc.RemoteableWebWindows
             Guid id = Guid.Parse(request.Id);
             if (!_webWindowDictionary.ContainsKey(id))
             {
-                //var webWindow = new WebWindow(request.Title, RemoteOptions(request.HtmlHostPath));
                 WebWindow webWindow = null;
                
-                //Program.form.Invoke((Action)(() => { webWindow = new WebWindow(request.Title, ComponentsDesktop.StandardOptions(request.HtmlHostPath)); }));
-                Program.form.Invoke((Action)(() => { webWindow = new WebWindow(request.Title, RemoteOptions(id,request.HtmlHostPath)); }));
+                // TODO
+                //Program.form.Invoke((Action)(() => { webWindow = new WebWindow(request.Title, RemoteOptions(id,request.HtmlHostPath)); }));
 
                 webWindow.OnWebMessageReceived += async(sender, message) =>
                 {

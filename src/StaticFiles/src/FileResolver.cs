@@ -27,17 +27,23 @@ namespace PeakSwc.Microsoft.AspNetCore.StaticFiles
 
                 if (!context.Session.Keys.Contains("WebWindow"))
                 {
-                    if (Path.GetDirectoryName(path).Length > 1)
+                    if (path != "favicon.ico" && path!="Index.cshtml")
                     {
                         // TODO: need a better way to get the Guid
                         var p = path.Split('/')[1];
                         var f = path.Replace(p, "").Substring(2);
                         path = f;
 
-                        
+
                         context.Items["Guid"] = new Guid(p);
                     }
-                    else return null;
+                    else
+                    {
+                        if (File.Exists(path))
+                            return File.Open(path,FileMode.Open);
+
+                        return null;
+                    }
                    
                 }
                

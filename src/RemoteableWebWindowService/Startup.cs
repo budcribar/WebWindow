@@ -10,11 +10,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PeakSwc.Microsoft.AspNetCore.StaticFiles;
+//using PeakSwc.Microsoft.AspNetCore.StaticFiles;
 using WebWindows;
-using PeakSwc.Microsoft.AspNetCore.Builder;
+//using PeakSwc.Microsoft.AspNetCore.Builder;
 
-using StaticFileOptions = PeakSwc.Microsoft.AspNetCore.Builder.StaticFileOptions;
+//using StaticFileOptions = PeakSwc.Microsoft.AspNetCore.Builder.StaticFileOptions;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -26,6 +26,7 @@ namespace PeakSwc.RemoteableWebWindows
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddRazorPages();
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
@@ -37,6 +38,7 @@ namespace PeakSwc.RemoteableWebWindows
             services.AddSingleton<ConcurrentDictionary<Guid, WebWindow>>();
             services.AddSingleton<ConcurrentDictionary<Guid,ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>>>(fileDictionary);
             services.AddSingleton<BlockingCollection<(Guid,string)>>(fileCollection);
+            
            
         }
 
@@ -48,28 +50,34 @@ namespace PeakSwc.RemoteableWebWindows
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting();
+            app.UseStaticFiles();
 
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new FileResolver(fileDictionary, fileCollection)
-            });
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    FileProvider = new FileResolver(fileDictionary, fileCollection)
+            //});
+
+            app.UseRouting();
 
             app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
+               
+
                 endpoints.MapGrpcService<RemoteWebWindowService>();
 
-                endpoints.MapGet("/", async context =>
-                {
-                    var services = context.RequestServices;
-                    var dict = services.GetService<ConcurrentDictionary<Guid, WebWindow>>();
+                //endpoints.MapGet("/", async context =>
+                //{
+                //    var services = context.RequestServices;
+                //    var dict = services.GetService<ConcurrentDictionary<Guid, WebWindow>>();
 
-                    var links = string.Join("<br/>", dict.Keys.Select(x => $"<a href='{x}/wwwroot/index.html'>{x}</a>"));
+                //    var links = string.Join("<br/>", dict.Keys.Select(x => $"<a href='{x}/wwwroot/index.html'>{x}</a>"));
 
-                    await context.Response.WriteAsync(links);
-                });
+                //    await context.Response.WriteAsync(links);
+                //});
+
+                endpoints.MapRazorPages();
             });
         }
     }

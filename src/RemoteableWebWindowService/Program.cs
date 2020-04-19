@@ -5,31 +5,34 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 using System.Net;
 
 namespace PeakSwc.RemoteableWebWindows
 {
     public class Program
     {
-        public static Form form;
+        // TODO Add form back
+        //public static Form form;
         [STAThread]
         public static void Main(string[] args)
         {
-            form = new Form
-            {
-                Visible = false,
-                WindowState = FormWindowState.Minimized
-            };
+            //form = new Form
+            //{
+            //    Visible = false,
+            //    WindowState = FormWindowState.Minimized
+            //};
 
             //var ww = new WebWindowTunnel(new Uri("https://localhost:443"), new Uri("https://localhost:5001"));
             //ww.Start();
 
 
-            Task.Run(() => CreateHostBuilder(args).Build().Run());
+            //Task.Run(() => CreateHostBuilder(args).Build().Run());
 
-           
-            Application.Run(form);
+            CreateHostBuilder(args).Build().Run();
+
+
+            //Application.Run(form);
 
         }
 
