@@ -5,8 +5,6 @@ using System;
 using Microsoft.AspNetCore.Http.Features;
 using PeakSWC.Microsoft.AspNetCore.StaticFiles;
 using PeakSWC.Microsoft.AspNetCore.StaticFiles.Infrastructure;
-//using Microsoft.AspNetCore.StaticFiles;
-//using Microsoft.AspNetCore.StaticFiles.Infrastructure;
 
 namespace PeakSWC.Microsoft.AspNetCore.Builder
 {

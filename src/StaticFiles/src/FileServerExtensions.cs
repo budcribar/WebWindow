@@ -6,8 +6,6 @@ using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 
-//using Microsoft.AspNetCore.StaticFiles;
-
 namespace PeakSWC.Microsoft.AspNetCore.Builder
 {
     /// <summary>

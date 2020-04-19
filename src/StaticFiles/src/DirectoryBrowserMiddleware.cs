@@ -4,17 +4,13 @@
 using System;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 
-using Microsoft.Net.Http.Headers;
 using PeakSWC.Microsoft.AspNetCore.Builder;
-using PeakSWC.Microsoft.AspNetCore.StaticFiles;
-using PeakSWC.Microsoft.AspNetCore.StaticFiles.Infrastructure;
+
 
 namespace PeakSWC.Microsoft.AspNetCore.StaticFiles
 {

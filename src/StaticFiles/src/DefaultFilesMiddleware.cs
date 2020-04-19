@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 using PeakSWC.Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 
 namespace PeakSWC.Microsoft.AspNetCore.StaticFiles
 {
