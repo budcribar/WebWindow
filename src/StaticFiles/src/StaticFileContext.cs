@@ -7,17 +7,19 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+//using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http.Headers;
-using Microsoft.AspNetCore.Internal;
-using Microsoft.Extensions.FileProviders;
+using PeakSWC.Microsoft.AspNetCore.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
+using PeakSWC.Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.FileProviders;
+//using Microsoft.Extensions.FileProviders;
 
-namespace Microsoft.AspNetCore.StaticFiles
+namespace PeakSWC.Microsoft.AspNetCore.StaticFiles
 {
     internal struct StaticFileContext
     {

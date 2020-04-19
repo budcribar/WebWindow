@@ -39,6 +39,7 @@ namespace Microsoft.AspNetCore.StaticFiles
         /// <summary>
         /// Generates an HTML view for a directory.
         /// </summary>
+        /*
         public virtual Task GenerateContentAsync(HttpContext context, IEnumerable<IFileInfo> contents)
         {
             if (context == null)
@@ -206,7 +207,7 @@ namespace Microsoft.AspNetCore.StaticFiles
             context.Response.ContentLength = bytes.Length;
             return context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
         }
-
+*/
         private string HtmlEncode(string body)
         {
             return _htmlEncoder.Encode(body);

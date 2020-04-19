@@ -3,14 +3,16 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+//using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
+//using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using PeakSWC.Microsoft.AspNetCore.Builder;
 
-namespace Microsoft.AspNetCore.StaticFiles
+namespace PeakSWC.Microsoft.AspNetCore.StaticFiles
 {
     /// <summary>
     /// Enables serving static files for a given request path

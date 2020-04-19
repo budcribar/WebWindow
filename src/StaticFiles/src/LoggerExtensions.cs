@@ -5,7 +5,7 @@ using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
-namespace Microsoft.AspNetCore.StaticFiles
+namespace PeakSWC.Microsoft.AspNetCore.StaticFiles
 {
     /// <summary>
     /// Defines *all* the logger messages produced by static files
