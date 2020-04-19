@@ -5,16 +5,15 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using RemoteableWebWindowService;
-using WebWindows;
 using PeakSwc.Microsoft.AspNetCore.StaticFiles;
+using WebWindows;
 using PeakSwc.Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Builder;
+
 using StaticFileOptions = PeakSwc.Microsoft.AspNetCore.Builder.StaticFileOptions;
 
 namespace PeakSwc.RemoteableWebWindows
@@ -27,10 +26,18 @@ namespace PeakSwc.RemoteableWebWindows
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.Cookie.Name = "WebWindow";
+                options.IdleTimeout = TimeSpan.FromSeconds(60 * 60);
+                options.Cookie.IsEssential = true;
+            });
             services.AddGrpc();
             services.AddSingleton<ConcurrentDictionary<Guid, WebWindow>>();
             services.AddSingleton<ConcurrentDictionary<Guid,ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>>>(fileDictionary);
             services.AddSingleton<BlockingCollection<(Guid,string)>>(fileCollection);
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,13 +52,10 @@ namespace PeakSwc.RemoteableWebWindows
 
             app.UseStaticFiles(new StaticFileOptions
             {
-                OnPrepareResponse = (context) =>
-                {
-                    var c = context.File;
-                },
                 FileProvider = new FileResolver(fileDictionary, fileCollection)
-
             });
+
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

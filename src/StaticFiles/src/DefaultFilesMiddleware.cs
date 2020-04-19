@@ -49,6 +49,7 @@ namespace PeakSwc.Microsoft.AspNetCore.StaticFiles
             _next = next;
             _options = options.Value;
             _fileProvider = _options.FileProvider ?? Helpers.ResolveFileProvider(hostingEnv);
+          
             _matchUrl = _options.RequestPath;
         }
 
@@ -72,6 +73,7 @@ namespace PeakSwc.Microsoft.AspNetCore.StaticFiles
                     for (int matchIndex = 0; matchIndex < _options.DefaultFileNames.Count; matchIndex++)
                     {
                         string defaultFile = _options.DefaultFileNames[matchIndex];
+                        
                         var file = _fileProvider.GetFileInfo(subpath.Value + defaultFile);
                         // TryMatchPath will make sure subpath always ends with a "/" by adding it if needed.
                         if (file.Exists)

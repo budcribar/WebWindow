@@ -52,11 +52,12 @@ namespace PeakSwc.Microsoft.AspNetCore.StaticFiles
             {
                 throw new ArgumentNullException(nameof(loggerFactory));
             }
-
+            
             _next = next;
             _options = options.Value;
             _contentTypeProvider = _options.ContentTypeProvider ?? new FileExtensionContentTypeProvider();
             _fileProvider = _options.FileProvider ?? Helpers.ResolveFileProvider(hostingEnv);
+
             _matchUrl = _options.RequestPath;
             _logger = loggerFactory.CreateLogger<StaticFileMiddleware>();
         }
