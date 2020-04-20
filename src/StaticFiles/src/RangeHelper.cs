@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 
-namespace PeakSwc.Microsoft.AspNetCore.Internal
+namespace PeakSwc.Internal
 {
     /// <summary>
     /// Provides a parser for the Range Header in an <see cref="HttpContext.Request"/>.

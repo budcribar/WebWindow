@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using PeakSwc.Microsoft.AspNetCore.Builder;
+using PeakSwc.Builder;
 
-namespace PeakSwc.Microsoft.AspNetCore.StaticFiles
+namespace PeakSwc.StaticFiles
 {
     /// <summary>
     /// Enables serving static files for a given request path

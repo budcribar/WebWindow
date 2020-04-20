@@ -13,6 +13,7 @@ using System.Threading;
 using System.Text;
 using System.Drawing;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Components;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -106,9 +107,12 @@ namespace PeakSwc.RemoteableWebWindows
             if (!_webWindowDictionary.ContainsKey(id))
             {
                 WebWindow webWindow = null;
-               
-                // TODO
-                //Program.form.Invoke((Action)(() => { webWindow = new WebWindow(request.Title, RemoteOptions(id,request.HtmlHostPath)); }));
+                //webWindow = new WebWindow(request.Title, RemoteOptions(id, request.HtmlHostPath));
+                Program.form.Invoke((Action)(() => { webWindow = new WebWindow(request.Title, RemoteOptions(id,request.HtmlHostPath)); }));
+
+                //var b = Program.dispatcher.CheckAccess();
+
+                //await Program.dispatcher.InvokeAsync(() => { webWindow = new WebWindow(request.Title, RemoteOptions(id, request.HtmlHostPath)); });
 
                 webWindow.OnWebMessageReceived += async(sender, message) =>
                 {

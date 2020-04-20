@@ -3,7 +3,7 @@
 
 using System.Threading.Tasks;
 
-namespace Microsoft.AspNetCore.StaticFiles
+namespace PeakSwc.StaticFiles
 {
     internal static class Constants
     {

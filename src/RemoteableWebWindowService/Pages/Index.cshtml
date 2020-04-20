@@ -1,10 +1,21 @@
 ﻿@page
 @model IndexModel
+@inject ConcurrentDictionary<Guid, WebWindow> Dictionary
+
 @{
     ViewData["Title"] = "Home page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <div>
+       
+            @foreach (var key in Dictionary.Keys)
+            {
+                var url = key + "/wwwroot/index.html";
+                <a href=@url>@key</a>
+                
+            }
+      
+    </div>
 </div>

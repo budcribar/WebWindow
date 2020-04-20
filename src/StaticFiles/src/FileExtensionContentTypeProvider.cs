@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace PeakSwc.Microsoft.AspNetCore.StaticFiles
+namespace PeakSwc.StaticFiles
 {
     /// <summary>
     /// Provides a mapping between file extensions and MIME types.

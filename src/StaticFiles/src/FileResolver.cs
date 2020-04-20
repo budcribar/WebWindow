@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace PeakSwc.Microsoft.AspNetCore.StaticFiles
+namespace PeakSwc.StaticFiles
 {
     public class FileInfo : IFileInfo
     {

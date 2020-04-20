@@ -5,7 +5,7 @@ using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
 
-namespace PeakSwc.Microsoft.AspNetCore.StaticFiles.Infrastructure
+namespace PeakSwc.StaticFiles.Infrastructure
 {
     /// <summary>
     /// Options common to several middleware components

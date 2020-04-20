@@ -5,7 +5,7 @@ using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
 
-namespace PeakSwc.Microsoft.AspNetCore.StaticFiles
+namespace PeakSwc.StaticFiles
 {
     /// <summary>
     /// Contains information about the request and the file that will be served in response.

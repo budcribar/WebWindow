@@ -12,13 +12,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http.Headers;
-using PeakSwc.Microsoft.AspNetCore.Internal;
+using PeakSwc.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
-using PeakSwc.Microsoft.AspNetCore.Builder;
+using PeakSwc.Builder;
 using Microsoft.Extensions.FileProviders;
 
-namespace PeakSwc.Microsoft.AspNetCore.StaticFiles
+namespace PeakSwc.StaticFiles
 {
     internal struct StaticFileContext
     {

@@ -7,32 +7,40 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 //using System.Windows.Forms;
 using System.Net;
+using Microsoft.JSInterop.Infrastructure;
+using Microsoft.AspNetCore.Components;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace PeakSwc.RemoteableWebWindows
 {
     public class Program
     {
-        // TODO Add form back
-        //public static Form form;
+        public static Form form;
+        public static Dispatcher dispatcher;
         [STAThread]
         public static void Main(string[] args)
         {
-            //form = new Form
-            //{
-            //    Visible = false,
-            //    WindowState = FormWindowState.Minimized
-            //};
+            //Application.Current
+            dispatcher = Dispatcher.CreateDefault();
+            form = new Form
+            {
+                Visible = false,
+                WindowState = FormWindowState.Minimized
+            };
+
+
 
             //var ww = new WebWindowTunnel(new Uri("https://localhost:443"), new Uri("https://localhost:5001"));
             //ww.Start();
 
 
-            //Task.Run(() => CreateHostBuilder(args).Build().Run());
+            Task.Run(() => CreateHostBuilder(args).Build().Run());
 
-            CreateHostBuilder(args).Build().Run();
+            //CreateHostBuilder(args).Build().Run();
 
 
-            //Application.Run(form);
+            Application.Run(form);
 
         }
 

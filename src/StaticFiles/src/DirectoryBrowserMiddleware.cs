@@ -9,10 +9,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 
-using PeakSwc.Microsoft.AspNetCore.Builder;
+using PeakSwc.Builder;
 
 
-namespace PeakSwc.Microsoft.AspNetCore.StaticFiles
+namespace PeakSwc.StaticFiles
 {
     /// <summary>
     /// Enables directory browsing
