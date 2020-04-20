@@ -25,9 +25,9 @@ namespace PeakSwc.StaticFiles
             {
                 if (string.IsNullOrEmpty(path)) return null;
 
-                if (!context.Session.Keys.Contains("WebWindow"))
+                if (!context.Session.Keys.Contains("Guid"))
                 {
-                    if (path != "favicon.ico" && path!="Index.cshtml")
+                    if (path != "/favicon.ico" && path!="Index.cshtml")
                     {
                         // TODO: need a better way to get the Guid
                         var p = path.Split('/')[1];
@@ -35,7 +35,7 @@ namespace PeakSwc.StaticFiles
                         path = f;
 
 
-                        context.Items["Guid"] = new Guid(p);
+                        context.Session.SetString ("Guid", p);
                     }
                     else
                     {
@@ -47,7 +47,7 @@ namespace PeakSwc.StaticFiles
                    
                 }
                
-                stream = ProcessFile((Guid)context.Items["Guid"], path);
+                stream = ProcessFile(Guid.Parse(context.Session.GetString("Guid")), path);
             }
 
             return stream;
@@ -83,7 +83,20 @@ namespace PeakSwc.StaticFiles
             _fileCollection.Add((id, appFile));
 
             _fileDictionary[id][appFile].mres.Wait();
-            return _fileDictionary[id][appFile].stream;
+            var stream = _fileDictionary[id][appFile].stream; 
+
+            if (appFile.EndsWith("index.html"))
+            {
+                stream.Position = 0;
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    var contents = sr.ReadToEnd();
+                    contents = contents.Replace("framework://blazor.desktop.js", "nothing.js");
+                    stream = new MemoryStream(Encoding.ASCII.GetBytes(contents));
+                }
+                   
+            }
+            return stream;
         }
 
 

@@ -52,14 +52,16 @@ namespace PeakSwc.RemoteableWebWindows
 
             //app.UseStaticFiles();
 
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new FileResolver(fileDictionary, fileCollection)
-            });
+           
 
             app.UseRouting();
 
             app.UseSession();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new FileResolver(fileDictionary, fileCollection)
+            });
 
             app.UseEndpoints(endpoints =>
             {
