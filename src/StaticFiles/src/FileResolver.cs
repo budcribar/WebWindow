@@ -27,26 +27,27 @@ namespace PeakSwc.StaticFiles
 
                 if (!context.Session.Keys.Contains("Guid"))
                 {
-                    if (path != "/favicon.ico" && path!="Index.cshtml")
+                    if (path != "/favicon.ico" && path != "Index.cshtml")
                     {
                         // TODO: need a better way to get the Guid
                         var p = path.Split('/')[1];
                         var f = path.Replace(p, "").Substring(2);
                         path = f;
 
-
-                        context.Session.SetString ("Guid", p);
+                        context.Session.SetString("Root", Path.GetDirectoryName(f)); // TODO get the root from the app.
+                        context.Session.SetString("Guid", p);
                     }
                     else
                     {
                         if (File.Exists(path))
-                            return File.Open(path,FileMode.Open);
+                            return File.Open(path, FileMode.Open);
 
                         return null;
                     }
-                   
-                }
-               
+
+                } else path = context.Session.GetString("Root") + path;
+
+
                 stream = ProcessFile(Guid.Parse(context.Session.GetString("Guid")), path);
             }
 
@@ -83,15 +84,16 @@ namespace PeakSwc.StaticFiles
             _fileCollection.Add((id, appFile));
 
             _fileDictionary[id][appFile].mres.Wait();
-            var stream = _fileDictionary[id][appFile].stream; 
+            var stream = _fileDictionary[id][appFile].stream;
+            stream.Position = 0;
 
-            if (appFile.EndsWith("index.html"))
+            //if (appFile.EndsWith("index.html"))
             {
-                stream.Position = 0;
+               
                 using (StreamReader sr = new StreamReader(stream))
                 {
                     var contents = sr.ReadToEnd();
-                    contents = contents.Replace("framework://blazor.desktop.js", "nothing.js");
+                    contents = contents.Replace("framework://blazor.desktop.js", "_framework/blazor.server.js");
                     stream = new MemoryStream(Encoding.ASCII.GetBytes(contents));
                 }
                    
