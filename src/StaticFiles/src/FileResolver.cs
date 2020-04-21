@@ -93,7 +93,8 @@ namespace PeakSwc.StaticFiles
                 using (StreamReader sr = new StreamReader(stream))
                 {
                     var contents = sr.ReadToEnd();
-                    contents = contents.Replace("framework://blazor.desktop.js", "_framework/blazor.server.js");
+                    //contents = contents.Replace("framework://blazor.desktop.js", "_framework/blazor.server.js");
+                    contents = contents.Replace("framework://blazor.desktop.js", "blazor.server.js");
                     stream = new MemoryStream(Encoding.ASCII.GetBytes(contents));
                 }
                    
