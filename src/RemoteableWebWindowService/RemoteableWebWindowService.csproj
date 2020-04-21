@@ -4,7 +4,6 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>Exe</OutputType>
-    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,13 +16,12 @@
   <ItemGroup>
     <ProjectReference Include="..\StaticFiles\src\PeakSwc.StaticFiles.csproj" />
     <ProjectReference Include="..\WebWindow.Blazor\WebWindow.Blazor.csproj" />
-    <ProjectReference Include="..\WebWindow.Native\WebWindow.Native.vcxproj" />
     <ProjectReference Include="..\WebWindow\WebWindow.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="PresentationCore">
-      <HintPath>PresentationCore.dll</HintPath>
+    <Reference Include="Accessibility">
+      <HintPath>Accessibility.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms">
       <HintPath>System.Windows.Forms.dll</HintPath>

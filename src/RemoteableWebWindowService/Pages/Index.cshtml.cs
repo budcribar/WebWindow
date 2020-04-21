@@ -11,7 +11,7 @@ namespace PeakSwc.RemoteableWebWindows.Pages
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
-        string message;
+        
 
         public IndexModel(ILogger<IndexModel> logger)
         {

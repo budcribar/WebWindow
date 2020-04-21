@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WebWindow.Native\WebWindow.Native.vcxproj" />
     <ProjectReference Include="..\WebWindow\WebWindow.csproj" />
   </ItemGroup>
 
