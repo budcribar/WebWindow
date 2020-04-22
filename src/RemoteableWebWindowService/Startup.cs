@@ -15,6 +15,13 @@ using WebWindows;
 using PeakSwc.Builder;
 
 using StaticFileOptions = PeakSwc.Builder.StaticFileOptions;
+//using Microsoft.AspNetCore.Components;
+//using Microsoft.AspNetCore.Components.Server.Circuits;
+using PeakSwc.Components.Server.Circuits;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Http;
+using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -27,6 +34,7 @@ namespace PeakSwc.RemoteableWebWindows
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
+
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
@@ -34,6 +42,12 @@ namespace PeakSwc.RemoteableWebWindows
                 options.IdleTimeout = TimeSpan.FromSeconds(60 * 60);
                 options.Cookie.IsEssential = true;
             });
+
+            services.AddServerSideBlazor();
+            //services.AddScoped<NavigationManager, RemoteNavigationManager>();
+            //services.AddScoped<IJSRuntime, RemoteJSRuntime>();
+            //services.AddScoped<INavigationInterception, RemoteNavigationInterception>();
+
             services.AddGrpc();
             services.AddSingleton<ConcurrentDictionary<Guid, WebWindow>>();
             services.AddSingleton<ConcurrentDictionary<Guid,ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>>>(fileDictionary);
@@ -65,7 +79,7 @@ namespace PeakSwc.RemoteableWebWindows
 
             app.UseEndpoints(endpoints =>
             {
-               
+                endpoints.MapBlazorHub((x) => { x.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling; });
 
                 endpoints.MapGrpcService<RemoteWebWindowService>();
 
@@ -78,6 +92,8 @@ namespace PeakSwc.RemoteableWebWindows
 
                 //    await context.Response.WriteAsync(links);
                 //});
+
+
 
                 endpoints.MapRazorPages();
             });
