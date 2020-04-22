@@ -45,7 +45,7 @@ namespace PeakSwc.RemoteableWebWindows
 
             services.AddServerSideBlazor();
             //services.AddScoped<NavigationManager, RemoteNavigationManager>();
-            //services.AddScoped<IJSRuntime, RemoteJSRuntime>();
+            services.AddScoped<IJSRuntime, RemoteJSRuntime>();
             //services.AddScoped<INavigationInterception, RemoteNavigationInterception>();
 
             services.AddGrpc();

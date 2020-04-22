@@ -6,6 +6,13 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
 
+  
+  <ItemGroup>
+    <Compile Remove="Blazor\Http\Routing\ArrayBuilder.cs" />
+    <Compile Remove="Blazor\Ignitor\ComponentState.cs" />
+    <Compile Remove="Blazor\Ignitor\IComponent.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <Protobuf Include="..\Protos\webwindow.proto" GrpcServices="Server" Link="Protos\webwindow.proto" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.28.0" />
@@ -69,6 +76,11 @@
     <Content Update="wwwroot\sample-data\weather.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Blazor\Http\Routing\" />
+    <Folder Include="Blazor\Ignitor\" />
   </ItemGroup>
 
 </Project>
