@@ -22,7 +22,7 @@ namespace PeakSwc.AspNetCore.Builder
         /// </summary>
         /// <param name="endpoints">The <see cref="IEndpointRouteBuilder"/>.</param>
         /// <returns>The <see cref="ComponentEndpointConventionBuilder"/>.</returns>
-        public static ComponentEndpointConventionBuilder MapBlazorHub(this IEndpointRouteBuilder endpoints)
+        public static ComponentEndpointConventionBuilder PeakSwcMapBlazorHub(this IEndpointRouteBuilder endpoints)
         {
             if (endpoints == null)
             {

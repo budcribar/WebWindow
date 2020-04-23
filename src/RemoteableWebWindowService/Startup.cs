@@ -25,6 +25,7 @@ using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components;
 using PeakSwc.Extensions.DependencyInjection;
 using PeakSwc.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -80,9 +81,9 @@ namespace PeakSwc.RemoteableWebWindows
             app.UseEndpoints(endpoints =>
             {
                 endpoints.PeakSwcMapBlazorHub((x) => { x.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling; });
-
+                //endpoints.PeakSwcMapBlazorHub();
                 endpoints.MapGrpcService<RemoteWebWindowService>();
-
+               
                 //endpoints.MapGet("/", async context =>
                 //{
                 //    var services = context.RequestServices;
@@ -96,6 +97,8 @@ namespace PeakSwc.RemoteableWebWindows
 
 
                 endpoints.MapRazorPages();
+
+               
             });
         }
     }

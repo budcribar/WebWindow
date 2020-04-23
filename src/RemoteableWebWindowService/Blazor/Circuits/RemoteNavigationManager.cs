@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
-//using Interop = Microsoft.AspNetCore.Components.Web.BrowserNavigationManagerInterop;
+using Interop = PeakSwc.Components.Web.BrowserNavigationManagerInterop;
 
 namespace PeakSwc.Components.Server.Circuits
 {
@@ -78,7 +78,7 @@ namespace PeakSwc.Components.Server.Circuits
                 throw new NavigationException(absoluteUriString);
             }
 
-            //_jsRuntime.InvokeAsync<object>(Interop.NavigateTo, uri, forceLoad);
+            _jsRuntime.InvokeAsync<object>(Interop.NavigateTo, uri, forceLoad);
         }
 
         private static class Log

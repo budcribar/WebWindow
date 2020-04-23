@@ -5,7 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
-//using Interop = Microsoft.AspNetCore.Components.Web.BrowserNavigationManagerInterop;
+using Interop = PeakSwc.Components.Web.BrowserNavigationManagerInterop;
 
 namespace PeakSwc.Components.Server.Circuits
 {
@@ -37,7 +37,7 @@ namespace PeakSwc.Components.Server.Circuits
                     "attempted during prerendering or while the client is disconnected.");
             }
 
-            //await _jsRuntime.InvokeAsync<object>(Interop.EnableNavigationInterception);
+            await _jsRuntime.InvokeAsync<object>(Interop.EnableNavigationInterception);
         }
     }
 }
