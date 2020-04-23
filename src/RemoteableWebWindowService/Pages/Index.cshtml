@@ -9,13 +9,13 @@
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <div>
-       
-            @foreach (var key in Dictionary.Keys)
-            {
-                var url = key + "/wwwroot/index.html";
-                <a href=@url>@key</a>
-                
-            }
+
+        @foreach (var key in Dictionary.Keys)
+        {
+            var url = key + "/wwwroot/index.html";
+            <a href=@url>@key</a>
+
+        }
       
     </div>
 </div>
