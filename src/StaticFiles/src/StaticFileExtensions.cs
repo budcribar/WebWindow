@@ -19,14 +19,14 @@ namespace PeakSwc.Builder
         /// </summary>
         /// <param name="app"></param>
         /// <returns></returns>
-        public static IApplicationBuilder UseStaticFiles(this IApplicationBuilder app)
+        public static IApplicationBuilder PeakSwcUseStaticFiles(this IApplicationBuilder app)
         {
             if (app == null)
             {
                 throw new ArgumentNullException(nameof(app));
             }
 
-            return app.UseMiddleware<StaticFileMiddleware>();
+            return app.UseMiddleware<PeakSwcStaticFileMiddleware>();
         }
 
         /// <summary>
@@ -35,14 +35,14 @@ namespace PeakSwc.Builder
         /// <param name="app"></param>
         /// <param name="requestPath">The relative request path.</param>
         /// <returns></returns>
-        public static IApplicationBuilder UseStaticFiles(this IApplicationBuilder app, string requestPath)
+        public static IApplicationBuilder PeakSwcUseStaticFiles(this IApplicationBuilder app, string requestPath)
         {
             if (app == null)
             {
                 throw new ArgumentNullException(nameof(app));
             }
 
-            return app.UseStaticFiles(new StaticFileOptions
+            return app.PeakSwcUseStaticFiles(new StaticFileOptions
             {
                 RequestPath = new PathString(requestPath)
             });
@@ -54,7 +54,7 @@ namespace PeakSwc.Builder
         /// <param name="app"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static IApplicationBuilder UseStaticFiles(this IApplicationBuilder app, StaticFileOptions options)
+        public static IApplicationBuilder PeakSwcUseStaticFiles(this IApplicationBuilder app, StaticFileOptions options)
         {
             if (app == null)
             {
@@ -65,7 +65,7 @@ namespace PeakSwc.Builder
                 throw new ArgumentNullException(nameof(options));
             }
 
-            return app.UseMiddleware<StaticFileMiddleware>(Options.Create(options));
+            return app.UseMiddleware<PeakSwcStaticFileMiddleware>(Options.Create(options));
         }
     }
 }

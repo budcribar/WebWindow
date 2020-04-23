@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.StaticFiles;
 using PeakSwc.StaticFiles;
 using PeakSwc.StaticFiles.Infrastructure;
 

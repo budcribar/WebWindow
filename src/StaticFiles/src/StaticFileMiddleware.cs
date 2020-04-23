@@ -3,8 +3,10 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -15,7 +17,7 @@ namespace PeakSwc.StaticFiles
     /// <summary>
     /// Enables serving static files for a given request path
     /// </summary>
-    public class StaticFileMiddleware
+    public class PeakSwcStaticFileMiddleware
     {
         private readonly StaticFileOptions _options;
         private readonly PathString _matchUrl;
@@ -31,7 +33,7 @@ namespace PeakSwc.StaticFiles
         /// <param name="hostingEnv">The <see cref="IWebHostEnvironment"/> used by this middleware.</param>
         /// <param name="options">The configuration options.</param>
         /// <param name="loggerFactory">An <see cref="ILoggerFactory"/> instance used to create loggers.</param>
-        public StaticFileMiddleware(RequestDelegate next, IWebHostEnvironment hostingEnv, IOptions<StaticFileOptions> options, ILoggerFactory loggerFactory)
+        public PeakSwcStaticFileMiddleware(RequestDelegate next, IWebHostEnvironment hostingEnv, IOptions<StaticFileOptions> options, ILoggerFactory loggerFactory)
         {
             if (next == null)
             {
@@ -59,7 +61,7 @@ namespace PeakSwc.StaticFiles
             _fileProvider = _options.FileProvider ?? Helpers.ResolveFileProvider(hostingEnv);
 
             _matchUrl = _options.RequestPath;
-            _logger = loggerFactory.CreateLogger<StaticFileMiddleware>();
+            _logger = loggerFactory.CreateLogger<PeakSwcStaticFileMiddleware>();
         }
 
         /// <summary>

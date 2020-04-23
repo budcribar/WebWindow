@@ -14,7 +14,7 @@ using PeakSwc.StaticFiles;
 using WebWindows;
 using PeakSwc.Builder;
 
-using StaticFileOptions = PeakSwc.Builder.StaticFileOptions;
+//using StaticFileOptions = PeakSwc.Builder.StaticFileOptions;
 //using Microsoft.AspNetCore.Components;
 //using Microsoft.AspNetCore.Components.Server.Circuits;
 using PeakSwc.Components.Server.Circuits;
@@ -42,7 +42,7 @@ namespace PeakSwc.RemoteableWebWindows
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
-                options.Cookie.Name = "WebWindow";
+                options.Cookie.Name = "WebWindow2";
                 options.IdleTimeout = TimeSpan.FromSeconds(60 * 60);
                 options.Cookie.IsEssential = true;
             });
@@ -73,7 +73,7 @@ namespace PeakSwc.RemoteableWebWindows
 
             app.UseSession();
 
-            app.UseStaticFiles(new StaticFileOptions
+            app.PeakSwcUseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new FileResolver(fileDictionary, fileCollection)
             });

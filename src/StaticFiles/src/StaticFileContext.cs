@@ -17,6 +17,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using PeakSwc.Builder;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace PeakSwc.StaticFiles
 {

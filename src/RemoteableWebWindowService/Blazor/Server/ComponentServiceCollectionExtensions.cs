@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.AspNetCore.Builder;
 //using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 //using Microsoft.AspNetCore.Components.Authorization;
@@ -59,7 +60,7 @@ namespace PeakSwc.Extensions.DependencyInjection
             // Here we add a bunch of services that don't vary in any way based on the
             // user's configuration. So even if the user has multiple independent server-side
             // Components entrypoints, this lot is the same and repeated registrations are a no-op.
-            // TODO services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<StaticFileOptions>, ConfigureStaticFilesOptions>());
+            //services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<StaticFileOptions>, PeakSwcConfigureStaticFilesOptions>());
             services.TryAddSingleton<CircuitFactory>();
             services.TryAddSingleton<ServerComponentDeserializer>();
             services.TryAddSingleton<ServerComponentTypeCache>();

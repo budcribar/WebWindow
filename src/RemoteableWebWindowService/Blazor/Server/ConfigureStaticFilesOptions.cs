@@ -4,8 +4,10 @@
 using System;
 using System.IO;
 using System.Text;
+using Microsoft.AspNetCore.Builder;
 //using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 //using Microsoft.AspNetCore.StaticFiles;
 //using Microsoft.Extensions.FileProviders;
@@ -16,9 +18,9 @@ using PeakSwc.StaticFiles;
 
 namespace PeakSwc.Components.Server
 {
-    internal class ConfigureStaticFilesOptions : IPostConfigureOptions<StaticFileOptions>
+    internal class PeakSwcConfigureStaticFilesOptions : IPostConfigureOptions<StaticFileOptions>
     {
-        public ConfigureStaticFilesOptions(IWebHostEnvironment environment)
+        public PeakSwcConfigureStaticFilesOptions(IWebHostEnvironment environment)
         {
             Environment = environment;
         }
@@ -61,7 +63,7 @@ namespace PeakSwc.Components.Server
             }
 
             // Add our provider
-            var provider = new ManifestEmbeddedFileProvider(typeof(ConfigureStaticFilesOptions).Assembly);
+            var provider = new ManifestEmbeddedFileProvider(typeof(PeakSwcConfigureStaticFilesOptions).Assembly);
 
             options.FileProvider = new CompositeFileProvider(provider, options.FileProvider);
         }
