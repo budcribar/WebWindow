@@ -25,15 +25,9 @@
     <Compile Remove="FileExtensionContentTypeProvider.cs" />
     <Compile Remove="HtmlDirectoryFormatter.cs" />
     <Compile Remove="IContentTypeProvider.cs" />
-    <Compile Remove="Infrastructure\SharedOptions.cs" />
-    <Compile Remove="Infrastructure\SharedOptionsBase.cs" />
     <Compile Remove="StaticFileOptions.cs" />
     <Compile Remove="StaticFileResponseContext.cs" />
     <Compile Remove="StaticFilesEndpointRouteBuilderExtensions.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Infrastructure\" />
   </ItemGroup>
 
 </Project>

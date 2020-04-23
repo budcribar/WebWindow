@@ -42,7 +42,7 @@ namespace PeakSwc.RemoteableWebWindows
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
-                options.Cookie.Name = "WebWindow2";
+                options.Cookie.Name = "WebWindow";
                 options.IdleTimeout = TimeSpan.FromSeconds(60 * 60);
                 options.Cookie.IsEssential = true;
             });
