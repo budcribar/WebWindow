@@ -8,16 +8,24 @@
 
   
   <ItemGroup>
+    <Compile Remove="Blazor\Ignitor\**" />
+    <Content Remove="Blazor\Ignitor\**" />
+    <EmbeddedResource Remove="Blazor\Ignitor\**" />
+    <None Remove="Blazor\Ignitor\**" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
     <Compile Remove="Blazor\Http\Routing\ArrayBuilder.cs" />
-    <Compile Remove="Blazor\Ignitor\ComponentState.cs" />
-    <Compile Remove="Blazor\Ignitor\IComponent.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <Protobuf Include="..\Protos\webwindow.proto" GrpcServices="Server" Link="Protos\webwindow.proto" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.28.0" />
     <PackageReference Include="MessagePack" Version="2.1.115" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.Core" Version="2.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
@@ -80,7 +88,6 @@
 
   <ItemGroup>
     <Folder Include="Blazor\Http\Routing\" />
-    <Folder Include="Blazor\Ignitor\" />
   </ItemGroup>
 
 </Project>

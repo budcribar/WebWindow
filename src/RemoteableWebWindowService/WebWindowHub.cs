@@ -8,13 +8,17 @@ namespace RemoteableWebWindowService
 {
     public class WebWindowHub : Hub
     {
+        IPC _ipc;
+
+        public WebWindowHub(IPC ipc) { _ipc = ipc; }
+
         public async Task ReceiveMessage(string userId, string message)
         {
-
+            
         }
         public async Task SendMessage(string userId, string message)
         {
-            //await Clients.User(userId).SendAsync("receiveMessage", message);
+            _ipc.ReceiveMessage(message);
         }
     }
 }

@@ -14,6 +14,7 @@ using System.Text;
 using System.Drawing;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Components;
+using RemoteableWebWindowService;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -22,14 +23,17 @@ namespace PeakSwc.RemoteableWebWindows
         private readonly ILogger<RemoteWebWindowService> _logger;
         private readonly ConcurrentDictionary<Guid, WebWindow> _webWindowDictionary;
         private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> _fileDictionary;
-        private readonly  BlockingCollection<(Guid, string)> _fileCollection;
+        private readonly  BlockingCollection<(Guid id, string file)> _fileCollection;
+        private bool blazor = true;
+        private IPC _ipc;
 
-        public RemoteWebWindowService(ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, WebWindow> webWindowDictionary, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollection)
+        public RemoteWebWindowService(ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, WebWindow> webWindowDictionary, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollection, IPC ipc)
         {
             _logger = logger;
             _webWindowDictionary = webWindowDictionary;
             _fileDictionary = fileDictionary;
-            _fileCollection = fileCollection;        
+            _fileCollection = fileCollection;
+            _ipc = ipc;
         }
 
         public Action<WebWindowOptions> HelloWorldOptions()
@@ -107,30 +111,35 @@ namespace PeakSwc.RemoteableWebWindows
             if (!_webWindowDictionary.ContainsKey(id))
             {
                 WebWindow webWindow = null;
-                //webWindow = new WebWindow(request.Title, RemoteOptions(id, request.HtmlHostPath));
-                Program.form.Invoke((Action)(() => { webWindow = new WebWindow(request.Title, RemoteOptions(id,request.HtmlHostPath)); }));
 
-                //var b = Program.dispatcher.CheckAccess();
-
-                //await Program.dispatcher.InvokeAsync(() => { webWindow = new WebWindow(request.Title, RemoteOptions(id, request.HtmlHostPath)); });
-
-                webWindow.OnWebMessageReceived += async(sender, message) =>
+                if (blazor)
                 {
-                    //if (!context.CancellationToken.IsCancellationRequested)  //TODO cancellationtoken is null
-                    //lock (responseStream)
+                    _ipc.ResponseStream = responseStream;
+                }
+
+                else
+                {
+                    Program.form.Invoke((Action)(() => { webWindow = new WebWindow(request.Title, RemoteOptions(id, request.HtmlHostPath)); }));
+
+                    webWindow.OnWebMessageReceived += async (sender, message) =>
+                    {
+                        //if (!context.CancellationToken.IsCancellationRequested)  //TODO cancellationtoken is null
+                        //lock (responseStream)
                         await responseStream.WriteAsync(new WebMessageResponse { Response = "webmessage:" + message });
-                };
+                    };
 
-                webWindow.LocationChanged += async (sender, point) =>
-                {
-                    await responseStream.WriteAsync(new WebMessageResponse { Response = "location:" + JsonConvert.SerializeObject(point) });
-                };
+                    webWindow.LocationChanged += async (sender, point) =>
+                    {
+                        await responseStream.WriteAsync(new WebMessageResponse { Response = "location:" + JsonConvert.SerializeObject(point) });
+                    };
 
-                webWindow.SizeChanged += async (sender, size) =>
-                {
-                    await responseStream.WriteAsync(new WebMessageResponse { Response = "size:" + JsonConvert.SerializeObject(size) }); ;
-                };
+                    webWindow.SizeChanged += async (sender, size) =>
+                    {
+                        await responseStream.WriteAsync(new WebMessageResponse { Response = "size:" + JsonConvert.SerializeObject(size) }); ;
+                    };
 
+                }
+               
                 _webWindowDictionary.TryAdd(id, webWindow);
 
                 await responseStream.WriteAsync(new WebMessageResponse { Response = "created:" });
@@ -150,7 +159,8 @@ namespace PeakSwc.RemoteableWebWindows
             var task = Task.Run(async () => {
                 while (true)
                 {
-                    if ( _fileCollection.TryTake(out (Guid id,string file) t))
+
+                    var t = _fileCollection.Take();
                     {
                         if (_fileDictionary.ContainsKey(t.id))
                             await responseStream.WriteAsync(new FileReadResponse { Id=t.id.ToString(), Path = t.file });
@@ -170,7 +180,11 @@ namespace PeakSwc.RemoteableWebWindows
         {
             Guid id = Guid.Parse(request.Id);
 
-            _webWindowDictionary[id].WaitForExit();
+            if (blazor)
+                Thread.Sleep(TimeSpan.FromHours(4));
+
+            else
+                _webWindowDictionary[id].WaitForExit();
 
             Shutdown(id);
             return Task.FromResult<Empty>(new Empty());
@@ -179,7 +193,8 @@ namespace PeakSwc.RemoteableWebWindows
         public override Task<Empty> Show(IdMessageRequest request, ServerCallContext context)
         {
             Guid id = Guid.Parse(request.Id);
-            _webWindowDictionary[id].Show();
+            if (!blazor)
+                _webWindowDictionary[id].Show();
             return Task.FromResult<Empty>(new Empty());
         }
 
@@ -194,14 +209,20 @@ namespace PeakSwc.RemoteableWebWindows
         public override Task<Empty> NavigateToUrl(UrlMessageRequest request, ServerCallContext context)
         {
             Guid id = Guid.Parse(request.Id);
-            _webWindowDictionary[id].NavigateToUrl(request.Url);
+
+            if (!blazor)
+                _webWindowDictionary[id].NavigateToUrl(request.Url);
             return Task.FromResult<Empty>(new Empty());
         }
 
         public override Task<Empty> SendMessage(SendMessageRequest request, ServerCallContext context)
         {
             Guid id = Guid.Parse(request.Id);
-            _webWindowDictionary[id].SendMessage(request.Message);
+
+            if (blazor)
+                _ipc.SendMessage(request.Message);
+            else
+                _webWindowDictionary[id].SendMessage(request.Message);
             return Task.FromResult<Empty>(new Empty());
         }
 

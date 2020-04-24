@@ -36,6 +36,8 @@ namespace PeakSwc.StaticFiles
 
                         context.Session.SetString("Root", Path.GetDirectoryName(f)); // TODO get the root from the app.
                         context.Session.SetString("Guid", p);
+                       
+                        //return null;
                     }
                     else
                     {

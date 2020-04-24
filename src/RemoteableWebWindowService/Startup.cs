@@ -27,6 +27,7 @@ using PeakSwc.Extensions.DependencyInjection;
 using PeakSwc.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using RemoteableWebWindowService;
+using Grpc.Core;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -48,11 +49,13 @@ namespace PeakSwc.RemoteableWebWindows
                 options.Cookie.IsEssential = true;
             });
 
+            services.AddSingleton<IPC>();
+
             //services.AddPeakSwcServerSideBlazor(x => x.DetailedErrors = true);
             services.AddSignalR();
             services.AddGrpc();
             services.AddSingleton<ConcurrentDictionary<Guid, WebWindow>>();
-            services.AddSingleton<ConcurrentDictionary<Guid,ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>>>(fileDictionary);
+            services.AddSingleton(fileDictionary);
             services.AddSingleton<BlockingCollection<(Guid,string)>>(fileCollection);
             
            
@@ -66,7 +69,7 @@ namespace PeakSwc.RemoteableWebWindows
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseStaticFiles();
+            //app.UseStaticFiles()
 
            
 
@@ -76,7 +79,15 @@ namespace PeakSwc.RemoteableWebWindows
 
             app.PeakSwcUseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new FileResolver(fileDictionary, fileCollection)
+                FileProvider = new FileResolver(fileDictionary, fileCollection),
+                //OnPrepareResponse = context => {
+                //    var components = context.Context.Request.Path.Value.Split('/');
+                //    if(components.Length >= 2 && Guid.TryParse(components[1], out Guid g))
+                //    {
+                //        var newTarget =  string.Join("/", components.TakeLast(components.Length - 2));
+                //        context.Context.Response.Redirect(newTarget, false);
+                //    }
+                //}
             });
 
             app.UseEndpoints(endpoints =>
