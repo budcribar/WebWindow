@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <None Include="wwwroot\remote\remote.blazor.desktop.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

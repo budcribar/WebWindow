@@ -18,7 +18,7 @@ namespace RemoteableWebWindowService
 
         public async void SendMessage(string message)
         {
-            await hub.Clients.All.SendAsync("SendMessage", message);          
+            await hub.Clients.All.SendAsync("ReceiveMessage", message);          
         }
         public IPC (IHubContext<WebWindowHub> hub){
             this.hub = hub;

@@ -32,7 +32,7 @@ function boot() {
         console.error(err.toString());
     });
 
-    connection.on("ReceiveMessage", message => receiveMessage(message))
+    connection.on("ReceiveMessage", message => { console.info("Received: " + message);receiveMessage(message) })
 
 
   setEventDispatcher((eventDescriptor, eventArgs) => DotNet.invokeMethodAsync('WebWindow.Blazor', 'DispatchEvent', eventDescriptor, JSON.stringify(eventArgs)));

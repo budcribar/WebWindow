@@ -14,7 +14,7 @@ namespace RemoteableWebWindowService
 
         public async Task ReceiveMessage(string userId, string message)
         {
-            
+            _ipc.SendMessage(message);
         }
         public async Task SendMessage(string userId, string message)
         {
