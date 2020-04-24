@@ -26,6 +26,7 @@ using Microsoft.AspNetCore.Components;
 using PeakSwc.Extensions.DependencyInjection;
 using PeakSwc.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using RemoteableWebWindowService;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -47,8 +48,8 @@ namespace PeakSwc.RemoteableWebWindows
                 options.Cookie.IsEssential = true;
             });
 
-            services.AddPeakSwcServerSideBlazor(x => x.DetailedErrors = true);
-           
+            //services.AddPeakSwcServerSideBlazor(x => x.DetailedErrors = true);
+            services.AddSignalR();
             services.AddGrpc();
             services.AddSingleton<ConcurrentDictionary<Guid, WebWindow>>();
             services.AddSingleton<ConcurrentDictionary<Guid,ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>>>(fileDictionary);
@@ -80,7 +81,8 @@ namespace PeakSwc.RemoteableWebWindows
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.PeakSwcMapBlazorHub((x) => { x.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling; });
+                endpoints.MapHub<WebWindowHub>("/webWindowHub", (x) => { x.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling; });
+                //endpoints.PeakSwcMapBlazorHub((x) => { x.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling; });
                 //endpoints.PeakSwcMapBlazorHub();
                 endpoints.MapGrpcService<RemoteWebWindowService>();
                

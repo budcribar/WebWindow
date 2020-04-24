@@ -6,8 +6,35 @@ import { internalFunctions as navigationManagerFunctions } from '@browserjs/Serv
 import { renderBatch } from '@browserjs/Rendering/Renderer';
 import { decode } from 'base64-arraybuffer';
 import * as ipc from './IPC';
+import * as signalR from '@aspnet/signalr';
+import { receiveMessage } from './IPC';
+
+let connection: signalR.HubConnection;
+
+export function sendMessage(message: string) {
+    connection.invoke("SendMessage", "userid", message).catch(err => {
+         console.error("SendMessage Failed" + err.toString());
+    });
+}
 
 function boot() {
+    connection = new signalR.HubConnectionBuilder().withUrl("/webWindowHub").build();
+
+    connection.start().then(() => {
+        console.info("Connection successful");
+        // Confirm that the JS side is ready for the app to start
+        ipc.send('components:init', [
+            navigationManagerFunctions.getLocationHref().replace(/\/index\.html$/, ''),
+            navigationManagerFunctions.getBaseURI()]);
+    }).catch(err => {
+        console.error("Unable to connect to SignalR hub");
+
+        console.error(err.toString());
+    });
+
+    connection.on("ReceiveMessage", message => receiveMessage(message))
+
+
   setEventDispatcher((eventDescriptor, eventArgs) => DotNet.invokeMethodAsync('WebWindow.Blazor', 'DispatchEvent', eventDescriptor, JSON.stringify(eventArgs)));
   navigationManagerFunctions.listenForNavigationEvents((uri: string, intercepted: boolean) => {
     return DotNet.invokeMethodAsync('WebWindow.Blazor', 'NotifyLocationChanged', uri, intercepted);
@@ -42,10 +69,7 @@ function boot() {
     console.error(message);
   });
 
-  // Confirm that the JS side is ready for the app to start
-  ipc.send('components:init', [
-    navigationManagerFunctions.getLocationHref().replace(/\/index\.html$/, ''),
-    navigationManagerFunctions.getBaseURI()]);
+  
 }
 
 boot();

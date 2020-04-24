@@ -45,7 +45,12 @@ namespace PeakSwc.StaticFiles
                         return null;
                     }
 
-                } else path = context.Session.GetString("Root") + path;
+                } else
+                {
+                    if (!path.Contains(context.Session.GetString("Root")))
+                        path = context.Session.GetString("Root") + path;
+                } 
+                    
 
 
                 stream = ProcessFile(Guid.Parse(context.Session.GetString("Guid")), path);
@@ -87,14 +92,14 @@ namespace PeakSwc.StaticFiles
             var stream = _fileDictionary[id][appFile].stream;
             stream.Position = 0;
 
-            //if (appFile.EndsWith("index.html"))
+            if (appFile.EndsWith("index.html"))
             {
                
                 using (StreamReader sr = new StreamReader(stream))
                 {
                     var contents = sr.ReadToEnd();
                     //contents = contents.Replace("framework://blazor.desktop.js", "_framework/blazor.server.js");
-                    contents = contents.Replace("framework://blazor.desktop.js", "blazor.server.js");
+                    contents = contents.Replace("framework://blazor.desktop.js", "remote/remote.blazor.desktop.js");
                     stream = new MemoryStream(Encoding.ASCII.GetBytes(contents));
                 }
                    

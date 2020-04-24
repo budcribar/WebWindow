@@ -1,3 +1,5 @@
+import { sendMessage } from "./Boot.Desktop";
+
 interface Callback {
     (...args: any[]): void;
 }
@@ -30,10 +32,10 @@ export function once(eventName: string, callback: Callback): void {
 }
 
 export function send(eventName: string, args: any): void {
-    (window as any).external.sendMessage(`ipc:${eventName} ${JSON.stringify(args)}`);
+    sendMessage(`ipc:${eventName} ${JSON.stringify(args)}`);
 }
 
-(window as any).external.receiveMessage((message: string) => {
+export function receiveMessage(message: string) {
     const colonPos = message.indexOf(':');
     const eventName = message.substring(0, colonPos);
     const argsJson = message.substr(colonPos + 1);
@@ -43,4 +45,6 @@ export function send(eventName: string, args: any): void {
         const args: any[] = JSON.parse(argsJson);
         group.forEach(callback => callback.apply(null, args));
     }
-});
+}
+
+
