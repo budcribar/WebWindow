@@ -12,3 +12,5 @@ artifacts/
 /src/RemoteableWebWindowService/publish/RemoteableWebWindowService.pdb
 /src/RemoteableWebWindowService/publish
 /src/RemoteableWebWindowService/publish.zip
+/src/RemoteWebWindow.Blazor.JS/node_modules
+/src/RemoteWebWindow.Blazor.JS/dist/remote.blazor.desktop.js
