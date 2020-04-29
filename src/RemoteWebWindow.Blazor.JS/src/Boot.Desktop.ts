@@ -29,23 +29,23 @@ function boot() {
 
     var message = new EmptyRequest();
 
-    grpc.invoke(BrowserIPC.GetHeight,
-        {
-            request: message,
-            host: "https://localhost:443",
-            onMessage: (message: IntMessageResponse) => {
+    //grpc.invoke(BrowserIPC.GetHeight,
+    //    {
+    //        request: message,
+    //        host: "https://localhost:443",
+    //        onMessage: (message: IntMessageResponse) => {
                 
-                message.setResponse(window.outerHeight);
-                console.info("GetHeight: " + window.outerHeight);
-            },
-            onEnd: (code: grpc.Code, msg: string | undefined, trailers: grpc.Metadata) => {
-                if (code == grpc.Code.OK) {
-                    console.log("all ok")
-                } else {
-                    console.log("hit an error", code, msg, trailers);
-                }
-            }
-        });
+    //            message.setResponse(window.outerHeight);
+    //            console.info("GetHeight: " + window.outerHeight);
+    //        },
+    //        onEnd: (code: grpc.Code, msg: string | undefined, trailers: grpc.Metadata) => {
+    //            if (code == grpc.Code.OK) {
+    //                console.log("all ok")
+    //            } else {
+    //                console.log("hit an error", code, msg, trailers);
+    //            }
+    //        }
+    //    });
 
     grpc.invoke(BrowserIPC.ReceiveMessage,
         {
@@ -103,5 +103,19 @@ function boot() {
         console.error(message);
     });
 }
+
+(<any>window).RemoteWebWindow = {
+
+    width: function (id) {
+
+        return window.outerWidth;
+    },
+    height: function (id) {
+        return window.outerHeight;
+    },
+
+
+
+};
   
 boot();

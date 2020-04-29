@@ -1,12 +1,15 @@
 ﻿@using System.Net
 @page "/counter"
 @inject IWebWindow Window
+@inject IJSRuntime JS
 
 <h1>Counter</h1>
 
 <p>Current count: @currentCount</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+<button class="btn btn-primary" @onclick="GetHeight">Height</button>
 <!--
     TODO remove this
 -->
@@ -14,10 +17,20 @@
 
 <p>Height:@height</p>
 
+
+
+
 @code {
     int currentCount = 0;
     string hostname = "";
     int height = 0;
+
+    async void GetHeight()
+    {
+        height = await JS.InvokeAsync<int>("RemoteWebWindow.height", null);
+        StateHasChanged();
+
+    }
 
     void IncrementCount()
     {
@@ -26,7 +39,7 @@
     protected override void OnInitialized()
     {
         hostname = Dns.GetHostName();
-        height = Window.Height;
+
 
     }
 }

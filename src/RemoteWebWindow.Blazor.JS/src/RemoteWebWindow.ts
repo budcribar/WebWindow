@@ -1,5 +1,3 @@
-
-
 (<any>window).RemoteWebWindow = {
    
     width: function (id) {

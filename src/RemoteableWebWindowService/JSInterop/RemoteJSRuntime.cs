@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
+using Microsoft.JSInterop.Infrastructure;
+using PeakSwc.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,72 +14,52 @@ namespace RemoteableWebWindowService
     {
        
         private readonly ILogger<RemoteJSRuntime> _logger;
-       
+        private readonly IPC _ipc;
 
-        public RemoteJSRuntime(ILogger<RemoteJSRuntime> logger)
+        public RemoteJSRuntime(IPC ipc, ILogger<RemoteJSRuntime> logger)
         {
+            _ipc = ipc;
             //ptions = options.Value;
             _logger = logger;
             DefaultAsyncTimeout = TimeSpan.FromMinutes(1);
             JsonSerializerOptions.Converters.Add(new ElementReferenceJsonConverter());
         }
 
-        internal void Initialize(CircuitClientProxy clientProxy)
-        {
-            _clientProxy = clientProxy ?? throw new ArgumentNullException(nameof(clientProxy));
-        }
+        private static Type VoidTaskResultType = typeof(Task).Assembly
+          .GetType("System.Threading.Tasks.VoidTaskResult", true);
 
-        protected override void EndInvokeDotNet(DotNetInvocationInfo invocationInfo, in DotNetInvocationResult invocationResult)
-        {
-            if (!invocationResult.Success)
-            {
-                Log.InvokeDotNetMethodException(_logger, invocationInfo, invocationResult.Exception);
-                string errorMessage;
-
-                if (_options.DetailedErrors)
-                {
-                    errorMessage = invocationResult.Exception.ToString();
-                }
-                else
-                {
-                    errorMessage = $"There was an exception invoking '{invocationInfo.MethodIdentifier}'";
-                    if (invocationInfo.AssemblyName != null)
-                    {
-                        errorMessage += $" on assembly '{invocationInfo.AssemblyName}'";
-                    }
-
-                    errorMessage += $". For more details turn on detailed exceptions in '{nameof(CircuitOptions)}.{nameof(CircuitOptions.DetailedErrors)}'";
-                }
-
-                EndInvokeDotNetCore(invocationInfo.CallId, success: false, errorMessage);
-            }
-            else
-            {
-                Log.InvokeDotNetMethodSuccess(_logger, invocationInfo);
-                EndInvokeDotNetCore(invocationInfo.CallId, success: true, invocationResult.Result);
-            }
-        }
-
-        private void EndInvokeDotNetCore(string callId, bool success, object resultOrError)
-        {
-            _clientProxy.SendAsync(
-                "JS.EndInvokeDotNet",
-                JsonSerializer.Serialize(new[] { callId, success, resultOrError }, JsonSerializerOptions));
-        }
 
         protected override void BeginInvokeJS(long asyncHandle, string identifier, string argsJson)
         {
-            if (_clientProxy is null)
+            if (_ipc is null)
             {
-                throw new InvalidOperationException(
-                    "JavaScript interop calls cannot be issued at this time. This is because the component is being " +
-                    $"statically rendered. When prerendering is enabled, JavaScript interop calls can only be performed " +
-                    $"during the OnAfterRenderAsync lifecycle method.");
+                throw new InvalidOperationException("JavaScript interop calls cannot be issued at this time.");
             }
 
             Log.BeginInvokeJS(_logger, asyncHandle, identifier);
 
-            _clientProxy.SendAsync("JS.BeginInvokeJS", asyncHandle, identifier, argsJson);
+            _ipc.SendMessage($"JS.BeginInvokeJS", asyncHandle,identifier,argsJson);
+        }
+
+        protected override void EndInvokeDotNet(DotNetInvocationInfo invocationInfo, in DotNetInvocationResult invocationResult)
+        {
+            // The other params aren't strictly required and are only used for logging
+            var resultOrError = invocationResult.Success ? HandlePossibleVoidTaskResult(invocationResult.Result) : invocationResult.Exception.ToString();
+            if (resultOrError != null)
+            {
+                _ipc.SendMessage("JS.EndInvokeDotNet", invocationInfo.CallId, invocationResult.Success, resultOrError);
+            }
+            else
+            {
+                _ipc.SendMessage("JS.EndInvokeDotNet", invocationInfo.CallId, invocationResult.Success);
+            }
+        }
+
+        private static object HandlePossibleVoidTaskResult(object result)
+        {
+            // Looks like the TaskGenericsUtil logic in Microsoft.JSInterop doesn't know how to
+            // understand System.Threading.Tasks.VoidTaskResult
+            return result?.GetType() == VoidTaskResultType ? null : result;
         }
 
         public static class Log

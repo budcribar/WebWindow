@@ -33,8 +33,10 @@ namespace PeakSwc.RemoteableWebWindows
                 options.Cookie.IsEssential = true;
             });
 
-            services.AddScoped < IJSRuntime, RemoteJSRuntime > ();>
             services.AddSingleton<IPC>();
+
+            services.AddScoped <IJSRuntime, RemoteJSRuntime>();
+           
 
             //services.AddPeakSwcServerSideBlazor(x => x.DetailedErrors = true);
             services.AddSignalR();
