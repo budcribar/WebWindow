@@ -25,8 +25,13 @@ namespace PeakSwc.StaticFiles
             {
                 if (string.IsNullOrEmpty(path)) return null;
 
-                if (context.Session.Keys == null)
-                    Thread.Sleep(500);
+                //try
+                //{
+                //    if (context.Session == null || context.Session.Keys == null)
+                //        Thread.Sleep(500);
+                //}
+                //catch (Exception) { Thread.Sleep(500); }
+              
 
                 if (!context.Session.Keys.Contains("Guid"))
                 {

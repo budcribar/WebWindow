@@ -66,7 +66,7 @@ namespace PeakSwc.RemoteableWebWindows
 
             //app.UseStaticFiles()
 
-           
+            app.UseSession();
 
             app.UseRouting();
 
@@ -74,7 +74,7 @@ namespace PeakSwc.RemoteableWebWindows
 
             app.UseGrpcWeb();
 
-            app.UseSession();
+            
 
             app.PeakSwcUseStaticFiles(new StaticFileOptions
             {
