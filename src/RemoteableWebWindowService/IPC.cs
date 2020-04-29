@@ -1,5 +1,4 @@
 ﻿using Grpc.Core;
-using Microsoft.AspNet.SignalR.Infrastructure;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using PeakSwc.RemoteableWebWindows;
@@ -14,14 +13,14 @@ namespace RemoteableWebWindowService
     public class IPC
     {
         public IServerStreamWriter<WebMessageResponse> ResponseStream { get; set; }
-        private IHubContext<WebWindowHub> hub;
+        public IServerStreamWriter<StringRequest> BrowserResponseStream { get; set; }
 
         public async void SendMessage(string message)
         {
-            await hub.Clients.All.SendAsync("ReceiveMessage", message);          
+            await BrowserResponseStream.WriteAsync (new StringRequest {  Request = message });          
         }
-        public IPC (IHubContext<WebWindowHub> hub){
-            this.hub = hub;
+        public IPC (){
+           
         }
 
         public async void ReceiveMessage(string message)

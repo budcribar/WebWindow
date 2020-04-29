@@ -1,33 +1,16 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-//using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PeakSwc.StaticFiles;
 using WebWindows;
 using PeakSwc.Builder;
 
-//using StaticFileOptions = PeakSwc.Builder.StaticFileOptions;
-//using Microsoft.AspNetCore.Components;
-//using Microsoft.AspNetCore.Components.Server.Circuits;
-using PeakSwc.Components.Server.Circuits;
-//using Microsoft.AspNetCore.Components;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.JSInterop;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components;
-using PeakSwc.Extensions.DependencyInjection;
-using PeakSwc.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using RemoteableWebWindowService;
-using Grpc.Core;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -57,8 +40,20 @@ namespace PeakSwc.RemoteableWebWindows
             services.AddSingleton<ConcurrentDictionary<Guid, WebWindow>>();
             services.AddSingleton(fileDictionary);
             services.AddSingleton<BlockingCollection<(Guid,string)>>(fileCollection);
-            
-           
+
+
+            services.AddCors(o =>
+            {
+                o.AddPolicy("MyPolicy", builder =>
+                {
+                    builder.WithOrigins("localhost:4200", "YourCustomDomain");
+                    builder.WithMethods("POST, OPTIONS");
+                    builder.AllowAnyHeader();
+                    builder.WithExposedHeaders("Grpc-Status", "Grpc-Message");
+                });
+            });
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,6 +69,10 @@ namespace PeakSwc.RemoteableWebWindows
            
 
             app.UseRouting();
+
+            app.UseCors("MyPolicy");
+
+            app.UseGrpcWeb();
 
             app.UseSession();
 
@@ -92,11 +91,13 @@ namespace PeakSwc.RemoteableWebWindows
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<WebWindowHub>("/webWindowHub", (x) => { x.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling; });
+                //endpoints.MapHub<WebWindowHub>("/webWindowHub", (x) => { x.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling; });
                 //endpoints.PeakSwcMapBlazorHub((x) => { x.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling; });
                 //endpoints.PeakSwcMapBlazorHub();
                 endpoints.MapGrpcService<RemoteWebWindowService>();
-               
+
+                endpoints.MapGrpcService<BrowserIPCService>().EnableGrpcWeb();
+
                 //endpoints.MapGet("/", async context =>
                 //{
                 //    var services = context.RequestServices;

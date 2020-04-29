@@ -25,6 +25,9 @@ namespace PeakSwc.StaticFiles
             {
                 if (string.IsNullOrEmpty(path)) return null;
 
+                if (context.Session.Keys == null)
+                    Thread.Sleep(500);
+
                 if (!context.Session.Keys.Contains("Guid"))
                 {
                     if (path != "/favicon.ico" && path != "Index.cshtml")

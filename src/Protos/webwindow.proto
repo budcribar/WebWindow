@@ -165,64 +165,14 @@ service RemoteWebWindow {
 
     rpc CreateWebWindow(CreateWebWindowRequest) returns (stream WebMessageResponse);
     rpc FileReader(stream FileReadRequest) returns (stream FileReadResponse);  
-rpc TunnelGetHeightRequest(google.protobuf.Empty) returns(IdMessageRequest);
-rpc TunnelGetHeightResponse(IntMessageResponse) returns (google.protobuf.Empty);
-rpc TunnelSetHeightRequest(google.protobuf.Empty) returns(IntMessageRequest);
-rpc TunnelSetHeightResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelGetLeftRequest(google.protobuf.Empty) returns(IdMessageRequest);
-rpc TunnelGetLeftResponse(IntMessageResponse) returns (google.protobuf.Empty);
-rpc TunnelSetLeftRequest(google.protobuf.Empty) returns(IntMessageRequest);
-rpc TunnelSetLeftResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelGetLocationRequest(google.protobuf.Empty) returns(IdMessageRequest);
-rpc TunnelGetLocationResponse(PointMessageResponse) returns (google.protobuf.Empty);
-rpc TunnelSetLocationRequest(google.protobuf.Empty) returns(PointMessageRequest);
-rpc TunnelSetLocationResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelGetMonitorsRequest(google.protobuf.Empty) returns(IdMessageRequest);
-rpc TunnelGetMonitorsResponse(MonitorResponse) returns (google.protobuf.Empty);
-rpc TunnelGetResizableRequest(google.protobuf.Empty) returns(IdMessageRequest);
-rpc TunnelGetResizableResponse(BoolResponse) returns (google.protobuf.Empty);
-rpc TunnelSetResizableRequest(google.protobuf.Empty) returns(BoolRequest);
-rpc TunnelSetResizableResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelGetScreenDpiRequest(google.protobuf.Empty) returns(IdMessageRequest);
-rpc TunnelGetScreenDpiResponse(UInt32Response) returns (google.protobuf.Empty);
-rpc TunnelSendMessageRequest(google.protobuf.Empty) returns(SendMessageRequest);
-rpc TunnelSendMessageResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelSetIconFileRequest(google.protobuf.Empty) returns(SendMessageRequest);
-rpc TunnelSetIconFileResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelShowRequest(google.protobuf.Empty) returns(IdMessageRequest);
-rpc TunnelShowResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelShowMessageRequest(google.protobuf.Empty) returns(ShowMessageRequest);
-rpc TunnelShowMessageResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelGetSizeRequest(google.protobuf.Empty) returns(IdMessageRequest);
-rpc TunnelGetSizeResponse(SizeMessageResponse) returns (google.protobuf.Empty);
-rpc TunnelSetSizeRequest(google.protobuf.Empty) returns(SizeMessageRequest);
-rpc TunnelSetSizeResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelGetTitleRequest(google.protobuf.Empty) returns(IdMessageRequest);
-rpc TunnelGetTitleResponse(StringResponse) returns (google.protobuf.Empty);
-rpc TunnelSetTitleRequest(google.protobuf.Empty) returns(StringRequest);
-rpc TunnelSetTitleResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelGetTopRequest(google.protobuf.Empty) returns(IdMessageRequest);
-rpc TunnelGetTopResponse(IntMessageResponse) returns (google.protobuf.Empty);
-rpc TunnelSetTopRequest(google.protobuf.Empty) returns(IntMessageRequest);
-rpc TunnelSetTopResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelGetTopmostRequest(google.protobuf.Empty) returns(IdMessageRequest);
-rpc TunnelGetTopmostResponse(BoolResponse) returns (google.protobuf.Empty);
-rpc TunnelSetTopmostRequest(google.protobuf.Empty) returns(BoolRequest);
-rpc TunnelSetTopmostResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelNavigateToLocalFileRequest(google.protobuf.Empty) returns(FileMessageRequest);
-rpc TunnelNavigateToLocalFileResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelNavigateToStringRequest(google.protobuf.Empty) returns(StringRequest);
-rpc TunnelNavigateToStringResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelNavigateToUrlRequest(google.protobuf.Empty) returns(UrlMessageRequest);
-rpc TunnelNavigateToUrlResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelWaitForExitRequest(google.protobuf.Empty) returns(IdMessageRequest);
-rpc TunnelWaitForExitResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelGetWidthRequest(google.protobuf.Empty) returns(IdMessageRequest);
-rpc TunnelGetWidthResponse(IntMessageResponse) returns (google.protobuf.Empty);
-rpc TunnelSetWidthRequest(google.protobuf.Empty) returns(IntMessageRequest);
-rpc TunnelSetWidthResponse(google.protobuf.Empty) returns (google.protobuf.Empty);
-rpc TunnelCreateWebWindowRequest(google.protobuf.Empty) returns(CreateWebWindowRequest);
-rpc TunnelCreateWebWindowResponse(WebMessageResponse) returns (google.protobuf.Empty);
-rpc TunnelFileReaderRequest(google.protobuf.Empty) returns(FileReadRequest);
-rpc TunnelFileReaderResponse(FileReadResponse) returns (google.protobuf.Empty);
+
+}
+
+message EmptyRequest {
+}
+
+service BrowserIPC {
+    rpc ReceiveMessage(EmptyRequest) returns (stream StringRequest);
+    rpc SendMessage(StringRequest) returns (EmptyRequest);
+
 }

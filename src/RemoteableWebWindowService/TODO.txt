@@ -16,3 +16,8 @@
 
 	Debug into C++
 	https://stackoverflow.com/questions/3535075/no-symbols-loaded-in-mixed-c-sharp-cwin32-project-using-vs2010
+
+
+
+	1. Home gives "There is nothing at this address" message
+	2. Initial cookie failed
