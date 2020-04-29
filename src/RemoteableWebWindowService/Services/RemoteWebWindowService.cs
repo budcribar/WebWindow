@@ -15,6 +15,7 @@ using System.Drawing;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Components;
 using RemoteableWebWindowService;
+using Microsoft.JSInterop;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -26,14 +27,18 @@ namespace PeakSwc.RemoteableWebWindows
         private readonly  BlockingCollection<(Guid id, string file)> _fileCollection;
         private bool blazor = true;
         private IPC _ipc;
+        private readonly BrowserIPCService _browserIPCService;
+        private readonly IJSRuntime _jsRuntime;
 
-        public RemoteWebWindowService(ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, WebWindow> webWindowDictionary, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollection, IPC ipc)
+        public RemoteWebWindowService(IJSRuntime jsRuntime, ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, WebWindow> webWindowDictionary, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollection, IPC ipc, BrowserIPCService browserIPCService)
         {
             _logger = logger;
             _webWindowDictionary = webWindowDictionary;
             _fileDictionary = fileDictionary;
             _fileCollection = fileCollection;
             _ipc = ipc;
+            _browserIPCService = browserIPCService;
+            _jsRuntime = jsRuntime;
         }
 
         public Action<WebWindowOptions> HelloWorldOptions()
@@ -233,11 +238,9 @@ namespace PeakSwc.RemoteableWebWindows
             return Task.FromResult<Empty>(new Empty());
         }
 
-        public override Task<IntMessageResponse> GetHeight(IdMessageRequest request, ServerCallContext context)
+        public async override Task<IntMessageResponse> GetHeight(IdMessageRequest request, ServerCallContext context)
         {
-            Guid id = Guid.Parse(request.Id);
-            
-            return Task.FromResult(new IntMessageResponse { Response = _webWindowDictionary[id].Height });       
+            return new IntMessageResponse { Response = await _jsRuntime.InvokeAsync<int>("RemoteWebWindow.height") };
         }
 
         public override Task<IntMessageResponse> GetLeft(IdMessageRequest request, ServerCallContext context)

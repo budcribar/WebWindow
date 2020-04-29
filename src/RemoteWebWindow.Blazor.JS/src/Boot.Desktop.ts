@@ -9,7 +9,7 @@ import * as ipc from './IPC';
 import { receiveMessage } from './IPC';
 import { grpc } from "@improbable-eng/grpc-web"; 
 import { BrowserIPC } from "./generated/webwindow_pb_service";
-import { StringRequest, EmptyRequest   } from "./generated/webwindow_pb";
+import { StringRequest, EmptyRequest, IntMessageResponse   } from "./generated/webwindow_pb";
 
 export function sendMessage(message: string) {
     var req = new StringRequest();
@@ -28,6 +28,24 @@ export function sendMessage(message: string) {
 function boot() {
 
     var message = new EmptyRequest();
+
+    grpc.invoke(BrowserIPC.GetHeight,
+        {
+            request: message,
+            host: "https://localhost:443",
+            onMessage: (message: IntMessageResponse) => {
+                
+                message.setResponse(window.outerHeight);
+                console.info("GetHeight: " + window.outerHeight);
+            },
+            onEnd: (code: grpc.Code, msg: string | undefined, trailers: grpc.Metadata) => {
+                if (code == grpc.Code.OK) {
+                    console.log("all ok")
+                } else {
+                    console.log("hit an error", code, msg, trailers);
+                }
+            }
+        });
 
     grpc.invoke(BrowserIPC.ReceiveMessage,
         {

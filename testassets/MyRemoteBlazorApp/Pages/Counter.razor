@@ -1,17 +1,23 @@
-﻿@using System.Net 
+﻿@using System.Net
 @page "/counter"
+@inject IWebWindow Window
 
 <h1>Counter</h1>
 
 <p>Current count: @currentCount</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
-
+<!--
+    TODO remove this
+-->
 <p>Hostname:@hostname</p>
+
+<p>Height:@height</p>
 
 @code {
     int currentCount = 0;
     string hostname = "";
+    int height = 0;
 
     void IncrementCount()
     {
@@ -20,6 +26,7 @@
     protected override void OnInitialized()
     {
         hostname = Dns.GetHostName();
+        height = Window.Height;
 
     }
 }

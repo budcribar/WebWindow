@@ -31,6 +31,8 @@ namespace PeakSwc.RemoteableWebWindows
             _ipc = ipc;
         }
 
+        
+
         public override Task ReceiveMessage(EmptyRequest request, IServerStreamWriter<StringRequest> responseStream, ServerCallContext context)
         {
             _ipc.BrowserResponseStream = responseStream;

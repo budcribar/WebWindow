@@ -327,10 +327,20 @@ type BrowserIPCSendMessage = {
   readonly responseType: typeof webwindow_pb.EmptyRequest;
 };
 
+type BrowserIPCGetHeight = {
+  readonly methodName: string;
+  readonly service: typeof BrowserIPC;
+  readonly requestStream: false;
+  readonly responseStream: false;
+  readonly requestType: typeof webwindow_pb.IdMessageRequest;
+  readonly responseType: typeof webwindow_pb.IntMessageResponse;
+};
+
 export class BrowserIPC {
   static readonly serviceName: string;
   static readonly ReceiveMessage: BrowserIPCReceiveMessage;
   static readonly SendMessage: BrowserIPCSendMessage;
+  static readonly GetHeight: BrowserIPCGetHeight;
 }
 
 export type ServiceError = { message: string, code: number; metadata: grpc.Metadata }
@@ -634,6 +644,15 @@ export class BrowserIPCClient {
   sendMessage(
     requestMessage: webwindow_pb.StringRequest,
     callback: (error: ServiceError|null, responseMessage: webwindow_pb.EmptyRequest|null) => void
+  ): UnaryResponse;
+  getHeight(
+    requestMessage: webwindow_pb.IdMessageRequest,
+    metadata: grpc.Metadata,
+    callback: (error: ServiceError|null, responseMessage: webwindow_pb.IntMessageResponse|null) => void
+  ): UnaryResponse;
+  getHeight(
+    requestMessage: webwindow_pb.IdMessageRequest,
+    callback: (error: ServiceError|null, responseMessage: webwindow_pb.IntMessageResponse|null) => void
   ): UnaryResponse;
 }
 

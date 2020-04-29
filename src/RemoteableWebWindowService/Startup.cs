@@ -11,6 +11,7 @@ using WebWindows;
 using PeakSwc.Builder;
 
 using RemoteableWebWindowService;
+using Microsoft.JSInterop;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -32,6 +33,7 @@ namespace PeakSwc.RemoteableWebWindows
                 options.Cookie.IsEssential = true;
             });
 
+            services.AddScoped < IJSRuntime, RemoteJSRuntime > ();>
             services.AddSingleton<IPC>();
 
             //services.AddPeakSwcServerSideBlazor(x => x.DetailedErrors = true);
