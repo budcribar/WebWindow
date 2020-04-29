@@ -8,23 +8,16 @@
 
   
   <ItemGroup>
-    <Compile Remove="Blazor\Ignitor\**" />
-    <Content Remove="Blazor\Ignitor\**" />
-    <EmbeddedResource Remove="Blazor\Ignitor\**" />
-    <None Remove="Blazor\Ignitor\**" />
-  </ItemGroup>
-
-  
-  <ItemGroup>
-    <Compile Remove="Blazor\Http\Routing\ArrayBuilder.cs" />
+    <Compile Remove="Blazor\**" />
+    <Content Remove="Blazor\**" />
+    <EmbeddedResource Remove="Blazor\**" />
+    <None Remove="Blazor\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Protobuf Include="..\Protos\webwindow.proto" GrpcServices="Server" Link="Protos\webwindow.proto" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.28.0" />
     <PackageReference Include="Grpc.AspNetCore.Web" Version="2.28.0-pre2" />
-  
-    <PackageReference Include="MessagePack" Version="2.1.115" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
@@ -84,10 +77,6 @@
     <Content Update="wwwroot\sample-data\weather.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Blazor\Http\Routing\" />
   </ItemGroup>
 
 </Project>
