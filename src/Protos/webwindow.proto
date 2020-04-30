@@ -151,9 +151,6 @@ service RemoteWebWindow {
     rpc GetTop(IdMessageRequest) returns (IntMessageResponse);
     rpc SetTop(IntMessageRequest) returns (google.protobuf.Empty);
 
-    rpc GetTopmost(IdMessageRequest) returns (BoolResponse);
-    rpc SetTopmost(BoolRequest) returns (google.protobuf.Empty);
-
     rpc NavigateToLocalFile(FileMessageRequest) returns (google.protobuf.Empty);
     rpc NavigateToString(StringRequest) returns (google.protobuf.Empty);
     rpc NavigateToUrl(UrlMessageRequest) returns (google.protobuf.Empty);

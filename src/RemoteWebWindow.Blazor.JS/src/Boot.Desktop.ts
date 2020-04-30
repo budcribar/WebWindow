@@ -113,7 +113,21 @@ function boot() {
     height: function (id) {
         return window.outerHeight;
     },
-
+    left: function (id) {
+        return window.screenLeft;
+    },
+    setLeft: function (id, left) {
+        return window.moveTo(left, window.screenY)
+    },
+    location: function (id) {
+        return { X: window.screenX, Y: window.screenY }
+    },
+    top: function (id) {
+        return window.screenTop;
+    },
+    size: function (id) {
+        return { Height: window.outerHeight, Width: window.outerWidth }
+    },
 
 
 };

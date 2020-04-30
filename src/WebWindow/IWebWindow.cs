@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
@@ -26,7 +27,7 @@ namespace WebWindows
         void NavigateToUrl(string url);
         void WaitForExit();
         int Width { get; set; }
-
+        IJSRuntime JSRuntime { get; set; }
         event EventHandler<Point> LocationChanged;
         event EventHandler<string> OnWebMessageReceived;
         event EventHandler<Size> SizeChanged;

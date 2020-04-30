@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
+using PeakSwc.RemoteableWebWindows;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -54,6 +55,8 @@ namespace WebWindows.Blazor
             try
             {
                 completed.Wait(); // TODO We need to wait for the new IPC to finish before trying to navigate
+
+                WebWindow.JSRuntime = DesktopJSRuntime;
                 WebWindow.NavigateToUrl(BlazorAppScheme + "://app/");
                 WebWindow.WaitForExit();
             }

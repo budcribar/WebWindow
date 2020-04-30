@@ -35,7 +35,7 @@ namespace PeakSwc.RemoteableWebWindows
 
             services.AddSingleton<IPC>();
 
-            services.AddScoped <IJSRuntime, RemoteJSRuntime>();
+            //services.AddScoped <IJSRuntime, RemoteJSRuntime>();
            
 
             //services.AddPeakSwcServerSideBlazor(x => x.DetailedErrors = true);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.JSInterop;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -469,6 +470,8 @@ namespace WebWindows
                 }
             }
         }
+
+        public IJSRuntime JSRuntime { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public void SetIconFile(string filename) => WebWindow_SetIconFile(_nativeWebWindow, Path.GetFullPath(filename));
     }

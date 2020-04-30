@@ -19,6 +19,7 @@
   </Target>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Blazor" Version="$(BlazorPackageVersion)" />
     <_NativeLibraries Include="$(NativeOutputDir)WebWindow.Native.dll" Condition="Exists('$(NativeOutputDir)WebWindow.Native.dll')" />
     <_NativeLibraries Include="$(NativeOutputDir)WebView2Loader.dll" Condition="Exists('$(NativeOutputDir)WebView2Loader.dll')" />
     <_NativeLibraries Include="$(NativeOutputDir)WebWindow.Native.so" Condition="Exists('$(NativeOutputDir)WebWindow.Native.so')" />

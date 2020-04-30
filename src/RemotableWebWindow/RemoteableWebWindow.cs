@@ -9,6 +9,7 @@ using Google.Protobuf;
 using System.Drawing;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Microsoft.JSInterop;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -99,41 +100,38 @@ namespace PeakSwc.RemoteableWebWindows
             }
         }
 
-        public int Height { get => Client.GetHeight(new IdMessageRequest { Id = Id }).Response; set => Client.SetHeight(new IntMessageRequest {  Id=Id, Message = value }); }
-        public int Left { get => Client.GetLeft(new IdMessageRequest { Id = Id }).Response; set => Client.SetLeft(new IntMessageRequest { Id=Id, Message = value }); }
-        public Point Location { get { var l = Client.GetLocation(new IdMessageRequest { Id = Id }); return new Point(l.X, l.Y); } set => Client.SetLocation(new PointMessageRequest { Id=Id, X=value.X, Y=value.Y }); }
+        public int Height { get => JSRuntime.InvokeAsync<int>("RemoteWebWindow.height").Result; set => Client.SetHeight(new IntMessageRequest {  Id=Id, Message = value }); }
+        public int Left { get => JSRuntime.InvokeAsync<int>("RemoteWebWindow.left").Result; set => Client.SetLeft(new IntMessageRequest { Id=Id, Message = value }); }
+        public Point Location { get { var l = JSRuntime.InvokeAsync<Point>("RemoteWebWindow.location").Result; return new Point(l.X, l.Y); } set => Client.SetLocation(new PointMessageRequest { Id=Id, X=value.X, Y=value.Y }); }
 
 
         public IReadOnlyList<WebWindows.Monitor> Monitors
         {
             get
             {
+                // TODO
                 List<WebWindows.Monitor> results = new List<WebWindows.Monitor>();
-                var monitors = Client.GetMonitors(new IdMessageRequest { Id = Id });
-                foreach (var m in monitors.Instances)
-                    results.Add(new WebWindows.Monitor(new Rectangle { X = m.MonitorArea.X, Y = m.MonitorArea.Y, Width = m.MonitorArea.Width, Height = m.MonitorArea.Height }, new Rectangle { X = m.WorkArea.X, Y = m.WorkArea.Y, Width = m.WorkArea.Width, Height = m.WorkArea.Height }));
                 return results;
             }
         }
 
-        public bool Resizable { get => Client.GetResizable(new IdMessageRequest { Id = Id }).Response; 
-            set => Client.SetResizable(new BoolRequest { Id = Id, Request = value }); }
+        public bool Resizable { get => true;  set { }  }
 
-        public uint ScreenDpi { get => Client.GetScreenDpi(new IdMessageRequest { Id = Id }).Response; }
+        public uint ScreenDpi { get => 96; }
 
-        public Size Size { get { var l = Client.GetSize(new IdMessageRequest { Id = Id }); return new Size(l.Width, l.Height); } set => Client.SetSize(new SizeMessageRequest { Id = Id, Width = value.Width, Height = value.Height }); }
+        public Size Size { get { var l = JSRuntime.InvokeAsync<Size>("RemoteWebWindow.size").Result; return new Size(l.Width, l.Height); } set => Client.SetSize(new SizeMessageRequest { Id = Id, Width = value.Width, Height = value.Height }); }
 
         public string Title { get => Client.GetTitle(new IdMessageRequest { Id = Id }).Response; set => Client.SetTitle(new StringRequest { Id = Id, Request = value }); }
 
-        public int Top { get => Client.GetTop(new IdMessageRequest { Id = Id }).Response; set => Client.SetTop(new IntMessageRequest { Id = Id, Message = value }); } 
+        public int Top { get => JSRuntime.InvokeAsync<int>("RemoteWebWindow.height").Result; set => Client.SetTop(new IntMessageRequest { Id = Id, Message = value }); } 
        
 
-        public bool Topmost { get => Client.GetTopmost(new IdMessageRequest { Id = Id }).Response; 
-            set => Client.SetTopmost(new BoolRequest { Id = Id, Request = value }); }
+        public bool Topmost { get => false; set { } }
 
 
         public int Width { get => Client.GetWidth(new IdMessageRequest { Id = Id }).Response; set => Client.SetWidth(new IntMessageRequest { Id = Id, Message = value }); }
-      
+        public IJSRuntime JSRuntime { get; set; }
+
         public event EventHandler<string> OnWebMessageReceived;
         public event EventHandler<Point> LocationChanged;
         public event EventHandler<Size> SizeChanged;
@@ -157,6 +155,7 @@ namespace PeakSwc.RemoteableWebWindows
 
         public void Show()
         {
+            // TODO
             Client.Show(new IdMessageRequest { Id=Id });
         }
 
@@ -167,27 +166,28 @@ namespace PeakSwc.RemoteableWebWindows
 
         public void WaitForExit()
         {
+            // TODO
             Client.WaitForExit(new IdMessageRequest { Id = id });
             cts.Cancel();
         }
 
         public void NavigateToLocalFile(string path)
         {
+            // TODO
             var absolutePath = Path.GetFullPath(path);
             var url = new Uri(absolutePath, UriKind.Absolute);
             Client.NavigateToUrl(new UrlMessageRequest { Id = Id, Url = url.ToString() });
            
         }
 
-        // TODO
         public void SetIconFile(string filename)
         {
-            Client.SetIconFile(new SendMessageRequest { Id = Id, Message = filename });
+            // TODO           
         }
 
         public void NavigateToString(string content)
         {
-            Client.NavigateToString(new StringRequest { Id = Id, Request = content });
+            // TODO
         }
     }
 }
