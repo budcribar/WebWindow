@@ -129,7 +129,7 @@ namespace PeakSwc.RemoteableWebWindows
         public bool Topmost { get => false; set { } }
 
 
-        public int Width { get => Client.GetWidth(new IdMessageRequest { Id = Id }).Response; set => Client.SetWidth(new IntMessageRequest { Id = Id, Message = value }); }
+        public int Width { get => JSRuntime.InvokeAsync<int>("RemoteWebWindow.width").Result; set => Client.SetWidth(new IntMessageRequest { Id = Id, Message = value }); }
         public IJSRuntime JSRuntime { get; set; }
 
         public event EventHandler<string> OnWebMessageReceived;
@@ -145,7 +145,7 @@ namespace PeakSwc.RemoteableWebWindows
 
         public void NavigateToUrl(string url)
         {
-            Client.NavigateToUrl(new UrlMessageRequest {  Id=Id, Url = url });
+           Client.NavigateToUrl(new UrlMessageRequest {  Id=Id, Url = url });
         }
 
         public void SendMessage(string message)
