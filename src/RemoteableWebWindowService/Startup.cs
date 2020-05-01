@@ -50,9 +50,14 @@ namespace PeakSwc.RemoteableWebWindows
             {
                 o.AddPolicy("MyPolicy", builder =>
                 {
-                    builder.WithOrigins("localhost:443", "localhost", "YourCustomDomain");
-                    builder.WithMethods("POST, OPTIONS");
+                    builder.AllowAnyOrigin();
                     builder.AllowAnyHeader();
+                    builder.AllowAnyMethod();
+                   
+                    // TODO tighten this up
+                    //builder.WithOrigins("localhost:443", "localhost", "YourCustomDomain");
+                   // builder.WithMethods("POST, OPTIONS");
+                    //builder.AllowAnyHeader();
                     builder.WithExposedHeaders("Grpc-Status", "Grpc-Message");
                 });
             });

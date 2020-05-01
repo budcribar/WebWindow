@@ -123,7 +123,7 @@ namespace PeakSwc.RemoteableWebWindows
 
         public string Title { get => Client.GetTitle(new IdMessageRequest { Id = Id }).Response; set => Client.SetTitle(new StringRequest { Id = Id, Request = value }); }
 
-        public int Top { get => JSRuntime.InvokeAsync<int>("RemoteWebWindow.height").Result; set => Client.SetTop(new IntMessageRequest { Id = Id, Message = value }); } 
+        public int Top { get => JSRuntime.InvokeAsync<int>("RemoteWebWindow.top").Result; set => Client.SetTop(new IntMessageRequest { Id = Id, Message = value }); } 
        
 
         public bool Topmost { get => false; set { } }

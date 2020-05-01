@@ -184,7 +184,7 @@ namespace PeakSwc.RemoteableWebWindows
             Guid id = Guid.Parse(request.Id);
 
             if (blazor)
-                Thread.Sleep(TimeSpan.FromHours(4));
+                Thread.Sleep(TimeSpan.FromHours(24));
 
             else
                 _webWindowDictionary[id].WaitForExit();

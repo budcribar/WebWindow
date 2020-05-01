@@ -17,7 +17,7 @@ export function sendMessage(message: string) {
     grpc.invoke(BrowserIPC.SendMessage, {
         request: req, host: "https://localhost:443", onEnd: (code, msg, trailers) => {
             if (code == grpc.Code.OK) {
-                console.log("all ok")
+                console.log("sent:" + message)
             } else {
                 console.log("hit an error", code, msg, trailers);
             }

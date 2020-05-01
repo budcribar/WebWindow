@@ -142,7 +142,7 @@ namespace WebWindows.Blazor
             DesktopJSRuntime = new DesktopJSRuntime(ipc);
             completed.Set();
            
-            await PerformHandshakeAsync(ipc);
+            //await PerformHandshakeAsync(ipc);
 
             AttachJsInterop(ipc, appLifetime);
 
@@ -169,10 +169,15 @@ namespace WebWindows.Blazor
                 Console.Error.WriteLine(exception);
             };
 
+            // Renderer need to be set up before handshake???? TODO
+            await PerformHandshakeAsync(ipc);
+
             foreach (var rootComponent in builder.Entries)
             {
                 _ = DesktopRenderer.AddComponentAsync(rootComponent.componentType, rootComponent.domElementSelector);
             }
+
+            
         }
 
         public static Stream SupplyFrameworkFile(string uri)
