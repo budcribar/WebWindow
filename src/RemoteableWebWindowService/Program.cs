@@ -60,8 +60,8 @@ namespace PeakSwc.RemoteableWebWindows
                         // internal  IP address of Amazon server
                        // options.Listen(IPAddress.Parse("172.31.10.32"), 443, lo => { lo.UseHttps("poc_certificate.pfx", "boldtek@2020"); });
 
-
-                        options.Listen(IPAddress.Parse("3.12.17.253"), 443, lo => { lo.UseHttps("poc_certificate.pfx", "boldtek@2020"); });
+                        options.ListenAnyIP(443, lo=> { lo.UseHttps("poc_certificate.pfx", ""); });
+                        //    options.Listen(IPAddress.Parse("3.12.17.253"), 443, lo => { lo.UseHttps("poc_certificate.pfx", "boldtek@2020"); });
                         // options.Listen(IPAddress.Loopback, 443, listenOptions => { listenOptions.UseHttps(); });
                     });
                     webBuilder.UseStartup<Startup>();
