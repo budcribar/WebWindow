@@ -15,6 +15,7 @@ namespace PeakSwc.StaticFiles
     {
         private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> _fileDictionary;
         private readonly BlockingCollection<(Guid, string)> _fileCollection;
+        private readonly ConcurrentDictionary<Guid, string> _rootDictionary;
         private string path;
         private readonly HttpContext context;
         Stream stream = null;
@@ -31,7 +32,12 @@ namespace PeakSwc.StaticFiles
 
                 // TODO do we need this?
                 if (File.Exists(path))
-                    return File.Open(path, FileMode.Open);
+                    try
+                    {
+                        return File.Open(path, FileMode.Open);
+                    }
+                    catch { return null; }
+                    
 
                 if (!path.Contains(root))
                     path = root + path;
@@ -44,11 +50,12 @@ namespace PeakSwc.StaticFiles
             return stream;
         } 
 
-        public FileInfo(HttpContext context, string path, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollect)
+        public FileInfo(HttpContext context, string path, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollect, ConcurrentDictionary<Guid, string> rootDictionary)
         {
             this.path = path;
             _fileDictionary = fileDictionary;
             _fileCollection = fileCollect;
+            _rootDictionary = rootDictionary;
             this.context = context;
         }
 
@@ -66,6 +73,8 @@ namespace PeakSwc.StaticFiles
 
         private Stream ProcessFile(Guid id, string appFile)
         {
+            if (!_rootDictionary.ContainsKey(id))
+                return null;
 
             if (!_fileDictionary.ContainsKey(id))
                 _fileDictionary.TryAdd(id, new ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>());
@@ -103,9 +112,12 @@ namespace PeakSwc.StaticFiles
     {
         private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> _fileDictionary;
         private readonly BlockingCollection<(Guid, string)> _fileCollection;
-        public FileResolver (ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollect) {
+        private readonly ConcurrentDictionary<Guid, string> _rootDictionary;
+
+        public FileResolver (ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollect, ConcurrentDictionary<Guid, string> rootDictionary) {
             _fileDictionary = fileDictionary;
             _fileCollection = fileCollect;
+            _rootDictionary = rootDictionary;
         }
 
         public HttpContext Context { get; set; }
@@ -118,7 +130,7 @@ namespace PeakSwc.StaticFiles
 
         public IFileInfo GetFileInfo(string subpath)
         {
-            return new FileInfo(Context, subpath, _fileDictionary, _fileCollection);
+            return new FileInfo(Context, subpath, _fileDictionary, _fileCollection, _rootDictionary);
         }
 
         public IChangeToken Watch(string filter)

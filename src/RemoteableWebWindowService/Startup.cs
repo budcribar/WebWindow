@@ -17,6 +17,7 @@ namespace PeakSwc.RemoteableWebWindows
     {
         private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> fileDictionary = new ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>>();
         private readonly BlockingCollection<(Guid, string)> fileCollection = new BlockingCollection<(Guid, string)>();
+        private readonly ConcurrentDictionary<Guid, string> rootDictionary = new ConcurrentDictionary<Guid, string>();
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -25,9 +26,9 @@ namespace PeakSwc.RemoteableWebWindows
             services.AddSingleton<IPC>();          
             services.AddSignalR();
             services.AddGrpc();
-            services.AddSingleton<ConcurrentDictionary<Guid, string>>();
+            services.AddSingleton(rootDictionary);
             services.AddSingleton(fileDictionary);
-            services.AddSingleton<BlockingCollection<(Guid,string)>>(fileCollection);
+            services.AddSingleton(fileCollection);
 
             services.AddCors(o =>
             {
@@ -62,7 +63,8 @@ namespace PeakSwc.RemoteableWebWindows
  
             app.PeakSwcUseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new FileResolver(fileDictionary, fileCollection),
+                // TODO get from context
+                FileProvider = new FileResolver(fileDictionary, fileCollection, rootDictionary),
                 //OnPrepareResponse = context => {
                 //    var components = context.Context.Request.Path.Value.Split('/');
                 //    if(components.Length >= 2 && Guid.TryParse(components[1], out Guid g))

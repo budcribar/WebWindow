@@ -177,7 +177,7 @@ namespace WebWindows.Blazor
                 _ = DesktopRenderer.AddComponentAsync(rootComponent.componentType, rootComponent.domElementSelector);
             }
 
-            
+            DesktopNavigationManager.Instance.NavigateTo("/");
         }
 
         public static Stream SupplyFrameworkFile(string uri)

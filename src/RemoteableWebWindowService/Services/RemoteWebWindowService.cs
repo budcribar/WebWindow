@@ -27,10 +27,10 @@ namespace PeakSwc.RemoteableWebWindows
         private readonly IPC _ipc;
         private readonly IJSRuntime _jsRuntime;
 
-        public RemoteWebWindowService(IJSRuntime jsRuntime, ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, string> webWindowDictionary, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollection, IPC ipc)
+        public RemoteWebWindowService(IJSRuntime jsRuntime, ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, string> rootDictionary, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollection, IPC ipc)
         {
             _logger = logger;
-            _webWindowDictionary = webWindowDictionary;
+            _webWindowDictionary = rootDictionary;
             _fileDictionary = fileDictionary;
             _fileCollection = fileCollection;
             _ipc = ipc;
