@@ -8,6 +8,8 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text.Json;
+using System.Diagnostics;
+using System.Threading.Channels;
 
 namespace RemoteableWebWindowService
 {
@@ -15,6 +17,8 @@ namespace RemoteableWebWindowService
     {
         public IServerStreamWriter<WebMessageResponse> ResponseStream { get; set; }
         public IServerStreamWriter<StringRequest> BrowserResponseStream { get; set; }
+
+        private readonly Channel<WebMessageResponse> responseChannel = Channel.CreateUnbounded<WebMessageResponse>();
 
         public async void SendMessage(string eventName, params object[] args)
         {
@@ -27,12 +31,18 @@ namespace RemoteableWebWindowService
             await BrowserResponseStream.WriteAsync (new StringRequest {  Request = message });          
         }
         public IPC (){
-           
+            Task.Run(async () =>
+            {
+                await foreach (var m in responseChannel.Reader.ReadAllAsync())
+                {
+                    await ResponseStream.WriteAsync(m);
+                }
+            });
         }
 
         public async void ReceiveMessage(string message)
         {
-            await ResponseStream.WriteAsync(new WebMessageResponse { Response = "webmessage:" + message });
+            await responseChannel.Writer.WriteAsync(new WebMessageResponse { Response = "webmessage:" + message });
         }
 
         public async void LocationChanged(Point point)
