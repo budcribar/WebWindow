@@ -22,27 +22,12 @@ namespace PeakSwc.RemoteableWebWindows
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-
-            services.AddDistributedMemoryCache();
-            services.AddSession(options =>
-            {
-                options.Cookie.Name = "WebWindow";
-                options.IdleTimeout = TimeSpan.FromSeconds(60 * 60);
-                options.Cookie.IsEssential = true;
-            });
-
-            services.AddSingleton<IPC>();
-
-            //services.AddScoped <IJSRuntime, RemoteJSRuntime>();
-           
-
-            //services.AddPeakSwcServerSideBlazor(x => x.DetailedErrors = true);
+            services.AddSingleton<IPC>();          
             services.AddSignalR();
             services.AddGrpc();
             services.AddSingleton<ConcurrentDictionary<Guid, string>>();
             services.AddSingleton(fileDictionary);
             services.AddSingleton<BlockingCollection<(Guid,string)>>(fileCollection);
-
 
             services.AddCors(o =>
             {
@@ -59,8 +44,6 @@ namespace PeakSwc.RemoteableWebWindows
                     builder.WithExposedHeaders("Grpc-Status", "Grpc-Message");
                 });
             });
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,20 +52,14 @@ namespace PeakSwc.RemoteableWebWindows
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
-
-            //app.UseStaticFiles()
-
-            app.UseSession();
+            }      
 
             app.UseRouting();
 
             app.UseCors("MyPolicy");
 
             app.UseGrpcWeb();
-
-            
-
+ 
             app.PeakSwcUseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new FileResolver(fileDictionary, fileCollection),
@@ -97,29 +74,21 @@ namespace PeakSwc.RemoteableWebWindows
             });
 
             app.UseEndpoints(endpoints =>
-            {
-                //endpoints.MapHub<WebWindowHub>("/webWindowHub", (x) => { x.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling; });
-                //endpoints.PeakSwcMapBlazorHub((x) => { x.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling; });
-                //endpoints.PeakSwcMapBlazorHub();
+            {             
                 endpoints.MapGrpcService<RemoteWebWindowService>();
 
                 endpoints.MapGrpcService<BrowserIPCService>().EnableGrpcWeb();
 
-                //endpoints.MapGet("/", async context =>
-                //{
-                //    var services = context.RequestServices;
-                //    var dict = services.GetService<ConcurrentDictionary<Guid, WebWindow>>();
+                endpoints.MapGet("/app", async context =>
+                {
+                    var guid = context.Request.Cookies["guid"];
+                    var home = context.Request.Cookies["home"];
 
-                //    var links = string.Join("<br/>", dict.Keys.Select(x => $"<a href='{x}/wwwroot/index.html'>{x}</a>"));
+                    context.Response.Redirect(home);
+                    context.Response.Headers.Add("Refresh", "10");
+                });
 
-                //    await context.Response.WriteAsync(links);
-                //});
-
-
-
-                endpoints.MapRazorPages();
-
-               
+                endpoints.MapRazorPages();               
             });
         }
     }

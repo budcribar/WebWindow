@@ -9,13 +9,21 @@
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <div>
+        <script type="text/javascript">
+            function setCookie(cname, cvalue, exdays) {
+                var d = new Date();
+                d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+                var expires = "expires=" + d.toUTCString();
+                document.cookie = cname + "=" + cvalue + "; " + expires;
+            }
+        </script>
 
         @foreach (var key in Dictionary.Keys)
         {
-            var url = key + "/wwwroot/index.html";
-            <a href=@url>@key</a>
+           
+            <button onclick="setCookie('guid', '@key', 1); setCookie('home', '@Dictionary[@key]', 1); location.href = '/app'">@key</button>
 
         }
-      
+
     </div>
 </div>

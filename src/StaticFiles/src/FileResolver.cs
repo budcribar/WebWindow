@@ -25,46 +25,20 @@ namespace PeakSwc.StaticFiles
             {
                 if (string.IsNullOrEmpty(path)) return null;
 
-                try
-                {
-                    // TODO Some kind of race condition is causing this to blow up
-                    if (context == null || context.Session == null || context.Session.Keys == null)
-                        Thread.Sleep(500);
-                }
-                catch (Exception) { Thread.Sleep(500); }
+                var guid = context.Request.Cookies["guid"];
+                var home = context.Request.Cookies["home"];
+                var root = Path.GetDirectoryName(home);
 
+                // TODO do we need this?
+                if (File.Exists(path))
+                    return File.Open(path, FileMode.Open);
 
-                if (!context.Session.Keys.Contains("Guid"))
-                {
-                    if (path != "/favicon.ico" && path != "Index.cshtml")
-                    {
-                        // TODO: need a better way to get the Guid
-                        var p = path.Split('/')[1];
-                        var f = path.Replace(p, "").Substring(2);
-                        path = f;
+                if (!path.Contains(root))
+                    path = root + path;
+                if (path.StartsWith('/'))
+                    path = path.Substring(1);
 
-                        context.Session.SetString("Root", Path.GetDirectoryName(f)); // TODO get the root from the app.
-                        context.Session.SetString("Guid", p);
-                       
-                        //return null;
-                    }
-                    else
-                    {
-                        if (File.Exists(path))
-                            return File.Open(path, FileMode.Open);
-
-                        return null;
-                    }
-
-                } else
-                {
-                    if (!path.Contains(context.Session.GetString("Root")))
-                        path = context.Session.GetString("Root") + path;
-                } 
-                    
-
-
-                stream = ProcessFile(Guid.Parse(context.Session.GetString("Guid")), path);
+                stream = ProcessFile(Guid.Parse(guid), path);
             }
 
             return stream;
