@@ -16,7 +16,7 @@ namespace PeakSwc.StaticFiles
         private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> _fileDictionary;
         private readonly BlockingCollection<(Guid, string)> _fileCollection;
         private string path;
-        private HttpContext context;
+        private readonly HttpContext context;
         Stream stream = null;
 
         private Stream GetStream()
@@ -25,13 +25,14 @@ namespace PeakSwc.StaticFiles
             {
                 if (string.IsNullOrEmpty(path)) return null;
 
-                //try
-                //{
-                //    if (context.Session == null || context.Session.Keys == null)
-                //        Thread.Sleep(500);
-                //}
-                //catch (Exception) { Thread.Sleep(500); }
-              
+                try
+                {
+                    // TODO Some kind of race condition is causing this to blow up
+                    if (context == null || context.Session == null || context.Session.Keys == null)
+                        Thread.Sleep(500);
+                }
+                catch (Exception) { Thread.Sleep(500); }
+
 
                 if (!context.Session.Keys.Contains("Guid"))
                 {

@@ -7,11 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PeakSwc.StaticFiles;
-using WebWindows;
 using PeakSwc.Builder;
-
 using RemoteableWebWindowService;
-using Microsoft.JSInterop;
+
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -41,7 +39,7 @@ namespace PeakSwc.RemoteableWebWindows
             //services.AddPeakSwcServerSideBlazor(x => x.DetailedErrors = true);
             services.AddSignalR();
             services.AddGrpc();
-            services.AddSingleton<ConcurrentDictionary<Guid, WebWindow>>();
+            services.AddSingleton<ConcurrentDictionary<Guid, string>>();
             services.AddSingleton(fileDictionary);
             services.AddSingleton<BlockingCollection<(Guid,string)>>(fileCollection);
 
