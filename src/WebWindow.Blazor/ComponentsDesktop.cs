@@ -24,7 +24,7 @@ namespace WebWindows.Blazor
         internal static DesktopRenderer DesktopRenderer { get; private set; }
         internal static IWebWindow WebWindow { get; private set; }
 
-        public static void Run<TStartup>(IWebWindow webWindow)
+        public static async void Run<TStartup>(IWebWindow webWindow)
         {
             DesktopSynchronizationContext.UnhandledException += (sender, exception) =>
             {
@@ -32,18 +32,21 @@ namespace WebWindows.Blazor
             };
 
             WebWindow = webWindow;
+            bool skipHandshake = false;
+            // TODO not needed
+
 
             var completed = new ManualResetEventSlim();
-           
+
             CancellationTokenSource appLifetimeCts = new CancellationTokenSource();
-            Task.Factory.StartNew(async () =>
+            var ipc = new IPC(WebWindow);
+
+            var task = Task.Factory.StartNew(async () =>
             {
                 try
                 {
-                    var ipc = new IPC(WebWindow);
-                    
-                    await RunAsync<TStartup>(ipc, appLifetimeCts.Token,completed);
-                    
+                    await RunAsync<TStartup>(ipc, appLifetimeCts.Token, completed, skipHandshake);
+
                 }
                 catch (Exception ex)
                 {
@@ -58,12 +61,28 @@ namespace WebWindows.Blazor
 
                 WebWindow.JSRuntime = DesktopJSRuntime;
                 WebWindow.NavigateToUrl(BlazorAppScheme + "://app/");
-                WebWindow.WaitForExit();
+
+                while (true)
+                {
+                    WebWindow.WaitForExit();
+
+                    await PerformHandshakeAsync(ipc);
+
+                    foreach (var rootComponent in builder.Entries)
+                    {
+                        _ = DesktopRenderer.AddComponentAsync(rootComponent.componentType, rootComponent.domElementSelector);
+                    }
+
+                    DesktopNavigationManager.Instance.NavigateTo("/");
+                }
+
+                
             }
             finally
             {
                 appLifetimeCts.Cancel();
             }
+
         }
 
         public static Action<WebWindowOptions> StandardOptions(string hostHtmlPath)
@@ -133,7 +152,9 @@ namespace WebWindows.Blazor
             WebWindow.ShowMessage("Error", $"{ex.Message}\n{ex.StackTrace}");
         }
 
-        private static async Task RunAsync<TStartup>(IPC ipc, CancellationToken appLifetime, ManualResetEventSlim completed)
+        private static DesktopApplicationBuilder builder;
+
+        private static async Task RunAsync<TStartup>(IPC ipc, CancellationToken appLifetime, ManualResetEventSlim completed, bool skipHandshake)
         {
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -158,7 +179,7 @@ namespace WebWindows.Blazor
             startup.ConfigureServices(serviceCollection);
 
             var services = serviceCollection.BuildServiceProvider();
-            var builder = new DesktopApplicationBuilder(services);
+            builder = new DesktopApplicationBuilder(services);
             startup.Configure(builder, services);
 
             var loggerFactory = services.GetRequiredService<ILoggerFactory>();
@@ -170,6 +191,7 @@ namespace WebWindows.Blazor
             };
 
             // Renderer need to be set up before handshake???? TODO
+
             await PerformHandshakeAsync(ipc);
 
             foreach (var rootComponent in builder.Entries)

@@ -10,13 +10,17 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Diagnostics;
 using System.Threading.Channels;
+using System.Threading;
 
 namespace RemoteableWebWindowService
 {
     public class IPC
     {
+        public string Name { get; set; }
         public IServerStreamWriter<WebMessageResponse> ResponseStream { get; set; }
         public IServerStreamWriter<StringRequest> BrowserResponseStream { get; set; }
+
+        private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
         private readonly Channel<WebMessageResponse> responseChannel = Channel.CreateUnbounded<WebMessageResponse>();
 
@@ -37,12 +41,17 @@ namespace RemoteableWebWindowService
                 {
                     await ResponseStream.WriteAsync(m);
                 }
-            });
+            }, cts.Token);
         }
 
         public async void ReceiveMessage(string message)
         {
             await responseChannel.Writer.WriteAsync(new WebMessageResponse { Response = "webmessage:" + message });
+        }
+
+        public void Shutdown()
+        {
+            cts.Cancel();
         }
 
         public async void LocationChanged(Point point)

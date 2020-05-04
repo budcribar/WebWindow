@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   
+  <ItemGroup>
+    <Compile Remove="JSInterop\**" />
+    <Content Remove="JSInterop\**" />
+    <EmbeddedResource Remove="JSInterop\**" />
+    <None Remove="JSInterop\**" />
+  </ItemGroup>
+
+  
  
   <ItemGroup>
     <Protobuf Include="..\Protos\webwindow.proto" GrpcServices="Server" Link="Protos\webwindow.proto" />

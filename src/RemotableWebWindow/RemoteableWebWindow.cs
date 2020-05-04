@@ -18,6 +18,8 @@ namespace PeakSwc.RemoteableWebWindows
         private readonly Uri uri;
         private readonly string windowTitle;
         private readonly string hostHtmlPath;
+        private int bootCount = 0;
+        private object bootLock = new object();
 
         private string id = null;
         private string Id
@@ -58,7 +60,18 @@ namespace PeakSwc.RemoteableWebWindows
                                         completed.Set();
                                         break;
                                     case "webmessage":
-                                        OnWebMessageReceived?.Invoke(null, data);
+                                        if (data == "booted:")
+                                            lock(bootLock)
+                                            {
+                                                bootCount++;
+                                                //if (bootCount >= 1)
+                                                //    cts.Cancel();
+                                            }
+                                                
+
+                                        else
+
+                                            OnWebMessageReceived?.Invoke(null, data);
                                         break;
                                     case "location":
                                         LocationChanged?.Invoke(null, JsonConvert.DeserializeObject<Point>( data));
@@ -167,8 +180,22 @@ namespace PeakSwc.RemoteableWebWindows
         public void WaitForExit()
         {
             // TODO
-            Client.WaitForExit(new IdMessageRequest { Id = id });
-            cts.Cancel();
+            //Client.WaitForExit(new IdMessageRequest { Id = id });
+            //cts.Cancel();
+            while (true)
+            {
+                lock(bootLock)
+                {
+                    if (bootCount>=1)
+                    {
+                        bootCount = 0;
+                        break;
+                    }
+                }
+                Thread.Sleep(1000);
+            }
+               
+
         }
 
         public void NavigateToLocalFile(string path)

@@ -24,7 +24,9 @@ namespace PeakSwc.RemoteableWebWindows
         private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> _fileDictionary;
         private readonly  BlockingCollection<(Guid id, string file)> _fileCollection;
         private readonly bool blazor = true;
-        private readonly IPC _ipc;
+        private  IPC _ipc;
+
+        // TODO get rid of this
         private readonly IJSRuntime _jsRuntime;
 
         public RemoteWebWindowService(IJSRuntime jsRuntime, ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, string> rootDictionary, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollection, IPC ipc)
@@ -37,6 +39,7 @@ namespace PeakSwc.RemoteableWebWindows
             _jsRuntime = jsRuntime;
         }
 
+        public IPC IPC { set { _ipc = value; } }
        
         private Stream ProcessFile(Guid id, string appFile)
         {
@@ -77,6 +80,7 @@ namespace PeakSwc.RemoteableWebWindows
 
                 }
             }
+            else _ipc.ResponseStream = responseStream;
         }
 
 

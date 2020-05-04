@@ -9,23 +9,26 @@ namespace PeakSwc.RemoteableWebWindows
     public class BrowserIPCService : BrowserIPC.BrowserIPCBase
     {
         private readonly ILogger<RemoteWebWindowService> _logger;
-        private readonly IPC _ipc;
-       
+        public IPC IPC { get; set; }
+        private volatile bool shutdown = false;
 
         public BrowserIPCService(ILogger<RemoteWebWindowService> logger, IPC ipc)
         {
             _logger = logger;
             
-            _ipc = ipc;
+            IPC = ipc;
         }
 
-        
+        public void Shutdown()
+        {
+            shutdown = true;
+        }
 
         public override Task ReceiveMessage(EmptyRequest request, IServerStreamWriter<StringRequest> responseStream, ServerCallContext context)
         {
-            _ipc.BrowserResponseStream = responseStream;
+            IPC.BrowserResponseStream = responseStream;
 
-            while (true)
+            while (!shutdown)
                 Thread.Sleep(1000);
 
             return Task.CompletedTask;
@@ -33,7 +36,7 @@ namespace PeakSwc.RemoteableWebWindows
 
         public override Task<EmptyRequest> SendMessage(StringRequest request, ServerCallContext context)
         {
-            _ipc.ReceiveMessage(request.Request);
+            IPC.ReceiveMessage(request.Request);
             return Task.FromResult<EmptyRequest>(new EmptyRequest());
         }
 
