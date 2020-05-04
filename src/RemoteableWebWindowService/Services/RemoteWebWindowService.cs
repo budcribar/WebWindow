@@ -22,14 +22,14 @@ namespace PeakSwc.RemoteableWebWindows
         private readonly ILogger<RemoteWebWindowService> _logger;
         private readonly ConcurrentDictionary<Guid, string> _webWindowDictionary;
         private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> _fileDictionary;
-        private readonly  BlockingCollection<(Guid id, string file)> _fileCollection;
+        private readonly ConcurrentDictionary<Guid, BlockingCollection<(Guid id, string file)>> _fileCollection;
         private readonly bool blazor = true;
         private  IPC _ipc;
 
         // TODO get rid of this
         private readonly IJSRuntime _jsRuntime;
 
-        public RemoteWebWindowService(IJSRuntime jsRuntime, ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, string> rootDictionary, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollection, IPC ipc)
+        public RemoteWebWindowService(IJSRuntime jsRuntime, ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, string> rootDictionary, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>> fileDictionary, ConcurrentDictionary<Guid, BlockingCollection<(Guid, string)>> fileCollection, IPC ipc)
         {
             _logger = logger;
             _webWindowDictionary = rootDictionary;
@@ -48,7 +48,7 @@ namespace PeakSwc.RemoteableWebWindows
                 _fileDictionary.TryAdd(id, new ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>());
 
             _fileDictionary[id][appFile] = (null, new ManualResetEventSlim());
-            _fileCollection.Add((id,appFile));
+            _fileCollection[id].Add((id,appFile));
 
             _fileDictionary[id][appFile].mres.Wait();
             return _fileDictionary[id][appFile].stream;
@@ -87,24 +87,34 @@ namespace PeakSwc.RemoteableWebWindows
         public override async Task FileReader(IAsyncStreamReader<FileReadRequest> requestStream, IServerStreamWriter<FileReadResponse> responseStream, ServerCallContext context)
         {
 
-            var task = Task.Run(async () => {
-                while (true)
-                {
 
-                    var (id, file) = _fileCollection.Take();
-                    {
-                        if (_fileDictionary.ContainsKey(id))
-                            await responseStream.WriteAsync(new FileReadResponse { Id=id.ToString(), Path = file });
-                    }
-                }
-                       
-            });
             await foreach (var message in requestStream.ReadAllAsync())
             {
                 Guid id = new Guid(message.Id);
+                if (!_fileCollection.ContainsKey(id))
+                    _fileCollection.TryAdd(id, new BlockingCollection<(Guid id, string file)>());
 
-                _fileDictionary[id][message.Path] = (new MemoryStream(message.Data.ToArray()), _fileDictionary[id][message.Path].mres);
-                _fileDictionary[id][message.Path].mres.Set();
+                if (message.Path == "Initialize")
+                {
+                    var task2 = Task.Run(async () =>
+                    {
+                        while (true)
+                        {
+                            var (idx, file) = _fileCollection[id].Take();
+                            {
+                                if (_fileDictionary.ContainsKey(id))
+                                    await responseStream.WriteAsync(new FileReadResponse { Id = id.ToString(), Path = file });
+                            }
+                        }
+
+                    });
+
+                }
+                else
+                { 
+                    _fileDictionary[id][message.Path] = (new MemoryStream(message.Data.ToArray()), _fileDictionary[id][message.Path].mres);
+                    _fileDictionary[id][message.Path].mres.Set();
+                }
             }
         }
         public override Task<Empty> WaitForExit(IdMessageRequest request, ServerCallContext context)

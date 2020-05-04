@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\remote.blazor.desktop.js" />
+    <Content Remove="wwwroot\remote\remote.blazor.desktop.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\remote\remote.blazor.desktop.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\RemotableWebWindow\RemotableWebWindow.csproj" />
+    <ProjectReference Include="..\..\src\WebWindow.Blazor\WebWindow.Blazor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

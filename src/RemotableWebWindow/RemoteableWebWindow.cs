@@ -93,6 +93,9 @@ namespace PeakSwc.RemoteableWebWindows
                     Task.Run(async () =>
                     {
                         var files = client.FileReader();
+
+                        await files.RequestStream.WriteAsync(new FileReadRequest { Id = Id, Path = "Initialize" });
+
                         await foreach (var message in files.ResponseStream.ReadAllAsync())
                         {
                             if (File.Exists(message.Path))

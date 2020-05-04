@@ -1,0 +1,63 @@
+﻿@using System.Net
+@page "/counter"
+@inject IWebWindow Window
+
+<h1>Counter</h1>
+
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<br />
+<button class="btn btn-primary" @onclick="GetHeight">Height</button>
+<button class="btn btn-primary" @onclick="GetLeft">Left</button>
+<button class="btn btn-primary" @onclick="GetTop">Top</button>
+<!--
+    TODO remove this
+-->
+<p>Hostname:@hostname</p>
+
+<p>Height:@height</p>
+<p>Left:@left</p>
+<p>Top:@top</p>
+
+
+@code {
+    int currentCount = 0;
+    string hostname = "";
+    int height = 0;
+    int left = 0;
+    int top = 0;
+
+    async void GetHeight()
+    {
+        height = Window.Height;
+        StateHasChanged();
+
+    }
+
+    async void GetLeft()
+    {
+        left = Window.Left;
+        StateHasChanged();
+
+    }
+
+    async void GetTop()
+    {
+        top = Window.Top;
+        //top = Window.Top;
+        StateHasChanged();
+
+    }
+
+    void IncrementCount()
+    {
+        currentCount++;
+    }
+    protected override void OnInitialized()
+    {
+        hostname = Dns.GetHostName();
+
+
+    }
+}

@@ -16,7 +16,7 @@ namespace PeakSwc.RemoteableWebWindows
     public class Startup
     {
         private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> fileDictionary = new ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>>();
-        private readonly BlockingCollection<(Guid, string)> fileCollection = new BlockingCollection<(Guid, string)>();
+        private readonly ConcurrentDictionary<Guid, BlockingCollection<(Guid, string)>> fileCollection = new ConcurrentDictionary<Guid, BlockingCollection<(Guid, string)>>();
         private readonly ConcurrentDictionary<Guid, string> rootDictionary = new ConcurrentDictionary<Guid, string>();
         private  IPC ipc = new IPC();
        

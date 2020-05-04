@@ -14,7 +14,7 @@ namespace PeakSwc.StaticFiles
     public class FileInfo : IFileInfo
     {
         private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> _fileDictionary;
-        private readonly BlockingCollection<(Guid, string)> _fileCollection;
+        private readonly ConcurrentDictionary<Guid, BlockingCollection<(Guid, string)>> _fileCollection;
         private readonly ConcurrentDictionary<Guid, string> _rootDictionary;
         private string path;
         private readonly HttpContext context;
@@ -50,7 +50,7 @@ namespace PeakSwc.StaticFiles
             return stream;
         } 
 
-        public FileInfo(HttpContext context, string path, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollect, ConcurrentDictionary<Guid, string> rootDictionary)
+        public FileInfo(HttpContext context, string path, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> fileDictionary, ConcurrentDictionary<Guid, BlockingCollection<(Guid, string)>> fileCollect, ConcurrentDictionary<Guid, string> rootDictionary)
         {
             this.path = path;
             _fileDictionary = fileDictionary;
@@ -80,7 +80,11 @@ namespace PeakSwc.StaticFiles
                 _fileDictionary.TryAdd(id, new ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>());
 
             _fileDictionary[id][appFile] = (null, new ManualResetEventSlim());
-            _fileCollection.Add((id, appFile));
+
+            if (!_fileCollection.ContainsKey(id))
+                _fileCollection.TryAdd(id, new BlockingCollection<(Guid, string)>());
+
+            _fileCollection[id].Add((id, appFile));
 
             _fileDictionary[id][appFile].mres.Wait();
             var stream = _fileDictionary[id][appFile].stream;
@@ -111,10 +115,10 @@ namespace PeakSwc.StaticFiles
     public class FileResolver : IFileProvider
     {
         private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> _fileDictionary;
-        private readonly BlockingCollection<(Guid, string)> _fileCollection;
+        private readonly ConcurrentDictionary<Guid,BlockingCollection<(Guid, string)>> _fileCollection;
         private readonly ConcurrentDictionary<Guid, string> _rootDictionary;
 
-        public FileResolver (ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> fileDictionary, BlockingCollection<(Guid, string)> fileCollect, ConcurrentDictionary<Guid, string> rootDictionary) {
+        public FileResolver (ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> fileDictionary, ConcurrentDictionary<Guid, BlockingCollection<(Guid, string)>> fileCollect, ConcurrentDictionary<Guid, string> rootDictionary) {
             _fileDictionary = fileDictionary;
             _fileCollection = fileCollect;
             _rootDictionary = rootDictionary;
