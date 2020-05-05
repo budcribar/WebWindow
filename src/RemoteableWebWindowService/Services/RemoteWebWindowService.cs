@@ -24,12 +24,12 @@ namespace PeakSwc.RemoteableWebWindows
         private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> _fileDictionary;
         private readonly ConcurrentDictionary<Guid, BlockingCollection<(Guid id, string file)>> _fileCollection;
         private readonly bool blazor = true;
-        private  IPC _ipc;
+        private ConcurrentDictionary<Guid,IPC> _ipc;
 
         // TODO get rid of this
         private readonly IJSRuntime _jsRuntime;
 
-        public RemoteWebWindowService(IJSRuntime jsRuntime, ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, string> rootDictionary, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>> fileDictionary, ConcurrentDictionary<Guid, BlockingCollection<(Guid, string)>> fileCollection, IPC ipc)
+        public RemoteWebWindowService(IJSRuntime jsRuntime, ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, string> rootDictionary, ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream, ManualResetEventSlim)>> fileDictionary, ConcurrentDictionary<Guid, BlockingCollection<(Guid, string)>> fileCollection, ConcurrentDictionary<Guid,IPC> ipc)
         {
             _logger = logger;
             _webWindowDictionary = rootDictionary;
@@ -39,7 +39,7 @@ namespace PeakSwc.RemoteableWebWindows
             _jsRuntime = jsRuntime;
         }
 
-        public IPC IPC { set { _ipc = value; } }
+        public ConcurrentDictionary<Guid,IPC> IPC { set { _ipc = value; } }
        
         private Stream ProcessFile(Guid id, string appFile)
         {
@@ -69,7 +69,8 @@ namespace PeakSwc.RemoteableWebWindows
 
                 await responseStream.WriteAsync(new WebMessageResponse { Response = "created:" });
 
-                _ipc.ResponseStream = responseStream;
+                if (!_ipc.ContainsKey(id)) _ipc.TryAdd(id,new IPC());
+                _ipc[id].ResponseStream = responseStream;
                
                 _webWindowDictionary.TryAdd(id, request.HtmlHostPath);
 
@@ -80,7 +81,7 @@ namespace PeakSwc.RemoteableWebWindows
 
                 }
             }
-            else _ipc.ResponseStream = responseStream;
+            else _ipc[id].ResponseStream = responseStream;
         }
 
 
@@ -154,7 +155,7 @@ namespace PeakSwc.RemoteableWebWindows
         {
             Guid id = Guid.Parse(request.Id);
 
-            _ipc.SendMessage(request.Message);
+            _ipc[id].SendMessage(request.Message);
             return Task.FromResult<Empty>(new Empty());
         }
 

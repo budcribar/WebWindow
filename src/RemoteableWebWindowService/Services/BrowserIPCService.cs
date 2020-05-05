@@ -3,16 +3,18 @@ using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using System.Threading;
 using RemoteableWebWindowService;
+using System;
+using System.Collections.Concurrent;
 
 namespace PeakSwc.RemoteableWebWindows
 {
     public class BrowserIPCService : BrowserIPC.BrowserIPCBase
     {
         private readonly ILogger<RemoteWebWindowService> _logger;
-        public IPC IPC { get; set; }
+        public ConcurrentDictionary<Guid, IPC> IPC { get; set; }
         private volatile bool shutdown = false;
 
-        public BrowserIPCService(ILogger<RemoteWebWindowService> logger, IPC ipc)
+        public BrowserIPCService(ILogger<RemoteWebWindowService> logger, ConcurrentDictionary<Guid, IPC> ipc)
         {
             _logger = logger;
             
@@ -26,7 +28,9 @@ namespace PeakSwc.RemoteableWebWindows
 
         public override Task ReceiveMessage(EmptyRequest request, IServerStreamWriter<StringRequest> responseStream, ServerCallContext context)
         {
-            IPC.BrowserResponseStream = responseStream;
+            Guid id = Guid.Parse(context.GetHttpContext().Request.Cookies["guid"]);
+            if (!IPC.ContainsKey(id)) IPC.TryAdd(id,new IPC());
+            IPC[id].BrowserResponseStream = responseStream;
 
             while (!shutdown)
                 Thread.Sleep(1000);
@@ -36,7 +40,9 @@ namespace PeakSwc.RemoteableWebWindows
 
         public override Task<EmptyRequest> SendMessage(StringRequest request, ServerCallContext context)
         {
-            IPC.ReceiveMessage(request.Request);
+            Guid id = Guid.Parse(context.GetHttpContext().Request.Cookies["guid"]);
+            if (!IPC.ContainsKey(id)) IPC.TryAdd(id, new IPC());
+            IPC[id].ReceiveMessage(request.Request);
             return Task.FromResult<EmptyRequest>(new EmptyRequest());
         }
 

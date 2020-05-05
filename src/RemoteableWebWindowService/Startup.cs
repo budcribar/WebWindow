@@ -18,16 +18,16 @@ namespace PeakSwc.RemoteableWebWindows
         private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>> fileDictionary = new ConcurrentDictionary<Guid, ConcurrentDictionary<string, (MemoryStream stream, ManualResetEventSlim mres)>>();
         private readonly ConcurrentDictionary<Guid, BlockingCollection<(Guid, string)>> fileCollection = new ConcurrentDictionary<Guid, BlockingCollection<(Guid, string)>>();
         private readonly ConcurrentDictionary<Guid, string> rootDictionary = new ConcurrentDictionary<Guid, string>();
-        private  IPC ipc = new IPC();
-       
+        private readonly ConcurrentDictionary<Guid, IPC> ipcDictionary = new ConcurrentDictionary<Guid, IPC>();
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            ipc.Name = "First";
+           
             services.AddRazorPages();
-            services.AddSingleton(ipc);          
+            services.AddSingleton(ipcDictionary);          
             services.AddSignalR();
             services.AddGrpc();
             services.AddSingleton(rootDictionary);
@@ -93,7 +93,7 @@ namespace PeakSwc.RemoteableWebWindows
                     if (context.Request.QueryString.HasValue && context.Request.QueryString.Value.Contains("restart"))
                     {
 
-                        ipc.ReceiveMessage("booted:");
+                        ipcDictionary[Guid.Parse(guid)].ReceiveMessage("booted:");
 
                         // TODO synchronize properly
                         Thread.Sleep(3000);
