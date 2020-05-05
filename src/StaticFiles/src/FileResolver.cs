@@ -90,6 +90,8 @@ namespace PeakSwc.StaticFiles
             var stream = _fileDictionary[id][appFile].stream;
             stream.Position = 0;
 
+
+            // TODO use the file specified in the dictionary
             if (appFile.EndsWith("index.html"))
             {
                
@@ -98,6 +100,17 @@ namespace PeakSwc.StaticFiles
                     var contents = sr.ReadToEnd();
                     //contents = contents.Replace("framework://blazor.desktop.js", "_framework/blazor.server.js");
                     contents = contents.Replace("framework://blazor.desktop.js", "remote/remote.blazor.desktop.js");
+                   
+
+                    string inject = @$"
+</app>
+  <script type = 'text/javascript'>
+       var webWindow = new Object();
+       webWindow.guid = '{id}';
+   </script>
+";
+                    contents = contents.Replace("</app>", inject);
+
                     stream = new MemoryStream(Encoding.ASCII.GetBytes(contents));
                 }
                    

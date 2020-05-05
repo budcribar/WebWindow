@@ -185,24 +185,6 @@ type RemoteWebWindowSetTop = {
   readonly responseType: typeof google_protobuf_empty_pb.Empty;
 };
 
-type RemoteWebWindowGetTopmost = {
-  readonly methodName: string;
-  readonly service: typeof RemoteWebWindow;
-  readonly requestStream: false;
-  readonly responseStream: false;
-  readonly requestType: typeof webwindow_pb.IdMessageRequest;
-  readonly responseType: typeof webwindow_pb.BoolResponse;
-};
-
-type RemoteWebWindowSetTopmost = {
-  readonly methodName: string;
-  readonly service: typeof RemoteWebWindow;
-  readonly requestStream: false;
-  readonly responseStream: false;
-  readonly requestType: typeof webwindow_pb.BoolRequest;
-  readonly responseType: typeof google_protobuf_empty_pb.Empty;
-};
-
 type RemoteWebWindowNavigateToLocalFile = {
   readonly methodName: string;
   readonly service: typeof RemoteWebWindow;
@@ -297,8 +279,6 @@ export class RemoteWebWindow {
   static readonly SetTitle: RemoteWebWindowSetTitle;
   static readonly GetTop: RemoteWebWindowGetTop;
   static readonly SetTop: RemoteWebWindowSetTop;
-  static readonly GetTopmost: RemoteWebWindowGetTopmost;
-  static readonly SetTopmost: RemoteWebWindowSetTopmost;
   static readonly NavigateToLocalFile: RemoteWebWindowNavigateToLocalFile;
   static readonly NavigateToString: RemoteWebWindowNavigateToString;
   static readonly NavigateToUrl: RemoteWebWindowNavigateToUrl;
@@ -314,7 +294,7 @@ type BrowserIPCReceiveMessage = {
   readonly service: typeof BrowserIPC;
   readonly requestStream: false;
   readonly responseStream: true;
-  readonly requestType: typeof webwindow_pb.EmptyRequest;
+  readonly requestType: typeof webwindow_pb.IdMessageRequest;
   readonly responseType: typeof webwindow_pb.StringRequest;
 };
 
@@ -555,24 +535,6 @@ export class RemoteWebWindowClient {
     requestMessage: webwindow_pb.IntMessageRequest,
     callback: (error: ServiceError|null, responseMessage: google_protobuf_empty_pb.Empty|null) => void
   ): UnaryResponse;
-  getTopmost(
-    requestMessage: webwindow_pb.IdMessageRequest,
-    metadata: grpc.Metadata,
-    callback: (error: ServiceError|null, responseMessage: webwindow_pb.BoolResponse|null) => void
-  ): UnaryResponse;
-  getTopmost(
-    requestMessage: webwindow_pb.IdMessageRequest,
-    callback: (error: ServiceError|null, responseMessage: webwindow_pb.BoolResponse|null) => void
-  ): UnaryResponse;
-  setTopmost(
-    requestMessage: webwindow_pb.BoolRequest,
-    metadata: grpc.Metadata,
-    callback: (error: ServiceError|null, responseMessage: google_protobuf_empty_pb.Empty|null) => void
-  ): UnaryResponse;
-  setTopmost(
-    requestMessage: webwindow_pb.BoolRequest,
-    callback: (error: ServiceError|null, responseMessage: google_protobuf_empty_pb.Empty|null) => void
-  ): UnaryResponse;
   navigateToLocalFile(
     requestMessage: webwindow_pb.FileMessageRequest,
     metadata: grpc.Metadata,
@@ -635,7 +597,7 @@ export class BrowserIPCClient {
   readonly serviceHost: string;
 
   constructor(serviceHost: string, options?: grpc.RpcOptions);
-  receiveMessage(requestMessage: webwindow_pb.EmptyRequest, metadata?: grpc.Metadata): ResponseStream<webwindow_pb.StringRequest>;
+  receiveMessage(requestMessage: webwindow_pb.IdMessageRequest, metadata?: grpc.Metadata): ResponseStream<webwindow_pb.StringRequest>;
   sendMessage(
     requestMessage: webwindow_pb.StringRequest,
     metadata: grpc.Metadata,

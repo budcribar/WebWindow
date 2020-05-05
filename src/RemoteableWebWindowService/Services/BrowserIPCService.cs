@@ -26,9 +26,9 @@ namespace PeakSwc.RemoteableWebWindows
             shutdown = true;
         }
 
-        public override Task ReceiveMessage(EmptyRequest request, IServerStreamWriter<StringRequest> responseStream, ServerCallContext context)
+        public override Task ReceiveMessage(IdMessageRequest request, IServerStreamWriter<StringRequest> responseStream, ServerCallContext context)
         {
-            Guid id = Guid.Parse(context.GetHttpContext().Request.Cookies["guid"]);
+            Guid id = Guid.Parse(request.Id);
             if (!IPC.ContainsKey(id)) IPC.TryAdd(id,new IPC());
             IPC[id].BrowserResponseStream = responseStream;
 
@@ -40,7 +40,7 @@ namespace PeakSwc.RemoteableWebWindows
 
         public override Task<EmptyRequest> SendMessage(StringRequest request, ServerCallContext context)
         {
-            Guid id = Guid.Parse(context.GetHttpContext().Request.Cookies["guid"]);
+            Guid id = Guid.Parse(request.Id);
             if (!IPC.ContainsKey(id)) IPC.TryAdd(id, new IPC());
             IPC[id].ReceiveMessage(request.Request);
             return Task.FromResult<EmptyRequest>(new EmptyRequest());
