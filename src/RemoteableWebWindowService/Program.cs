@@ -62,8 +62,8 @@ namespace PeakSwc.RemoteableWebWindows
                        
 
                        // options.ListenAnyIP(443, lo=> { lo.UseHttps("poc_certificate.pfx", ""); });
-                          options.Listen(IPAddress.Parse("3.12.17.253"), 443, lo => { lo.UseHttps("certificate.pfx", ""); });
-                        // options.Listen(IPAddress.Loopback, 443, listenOptions => { listenOptions.UseHttps(); });
+                        //  options.Listen(IPAddress.Parse("3.12.17.253"), 443, lo => { lo.UseHttps("certificate.pfx", ""); });
+                         options.Listen(IPAddress.Loopback, 443, listenOptions => { listenOptions.UseHttps(); });
                     });
                     webBuilder.UseStartup<Startup>();
                 });

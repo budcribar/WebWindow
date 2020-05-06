@@ -13,3 +13,4 @@ artifacts/
 /src/RemoteableWebWindowService/publish/RemoteableWebWindowService.exe
 /src/RemoteableWebWindowService/publish
 /src/RemoteableWebWindowService/publish.zip
+/src/RemoteableWebWindowService/debug.log
