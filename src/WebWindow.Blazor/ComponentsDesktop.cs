@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
-using PeakSwc.RemoteableWebWindows;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -23,6 +22,17 @@ namespace WebWindows.Blazor
         internal static DesktopJSRuntime DesktopJSRuntime { get; private set; }
         internal static DesktopRenderer DesktopRenderer { get; private set; }
         internal static IWebWindow WebWindow { get; private set; }
+
+        public static int GetHeight()
+        {
+            int result = 0;
+            var t = Task.Run(async () =>
+            {
+                result = await DesktopJSRuntime.InvokeAsync<int>("RemoteWebWindow.height");
+            });
+            t.Wait();
+            return result;
+        }
 
         public static async void Run<TStartup>(IWebWindow webWindow)
         {
@@ -46,7 +56,6 @@ namespace WebWindows.Blazor
                 try
                 {
                     await RunAsync<TStartup>(ipc, appLifetimeCts.Token, completed, skipHandshake);
-
                 }
                 catch (Exception ex)
                 {
@@ -60,7 +69,10 @@ namespace WebWindows.Blazor
                 completed.Wait(); // TODO We need to wait for the new IPC to finish before trying to navigate
 
                 WebWindow.JSRuntime = DesktopJSRuntime;
+                
                 WebWindow.NavigateToUrl(BlazorAppScheme + "://app/");
+
+               
 
                 while (true)
                 {

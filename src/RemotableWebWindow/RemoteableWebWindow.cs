@@ -15,12 +15,12 @@ namespace PeakSwc.RemoteableWebWindows
 {
     public class RemotableWebWindow : IWebWindow
     {
+        #region private
         private readonly Uri uri;
         private readonly string windowTitle;
         private readonly string hostHtmlPath;
         private int bootCount = 0;
         private object bootLock = new object();
-
         private string id = null;
         private string Id
         {
@@ -34,6 +34,9 @@ namespace PeakSwc.RemoteableWebWindows
         }
         private RemoteWebWindow.RemoteWebWindowClient client = null;
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
+        #endregion
+
+
         public RemoteWebWindow.RemoteWebWindowClient Client {
             get
             {
@@ -116,10 +119,11 @@ namespace PeakSwc.RemoteableWebWindows
             }
         }
 
-        public int Height { get => JSRuntime.InvokeAsync<int>("RemoteWebWindow.height").Result; set => Client.SetHeight(new IntMessageRequest {  Id=Id, Message = value }); }
-        public int Left { get => JSRuntime.InvokeAsync<int>("RemoteWebWindow.left").Result; set => Client.SetLeft(new IntMessageRequest { Id=Id, Message = value }); }
-        public Point Location { get { var l = JSRuntime.InvokeAsync<Point>("RemoteWebWindow.location").Result; return new Point(l.X, l.Y); } set => Client.SetLocation(new PointMessageRequest { Id=Id, X=value.X, Y=value.Y }); }
+        public IJSRuntime JSRuntime { get; set; }
 
+        public int Height { get => JSRuntime.InvokeAsync<int>("RemoteWebWindow.height").Result; set => JSRuntime.InvokeVoidAsync("RemoteWebWindow.setHeight", new object[] { value }); }
+        public int Left { get => JSRuntime.InvokeAsync<int>("RemoteWebWindow.left").Result; set => JSRuntime.InvokeVoidAsync("RemoteWebWindow.setLeft", new object[] { value }); }
+        public Point Location { get { var l = JSRuntime.InvokeAsync<Point>("RemoteWebWindow.location").Result; return new Point(l.X, l.Y); } set => JSRuntime.InvokeVoidAsync("RemoteWebWindow.setLocation", new object[] { value }); }
 
         public IReadOnlyList<WebWindows.Monitor> Monitors
         {
@@ -135,18 +139,15 @@ namespace PeakSwc.RemoteableWebWindows
 
         public uint ScreenDpi { get => 96; }
 
-        public Size Size { get { var l = JSRuntime.InvokeAsync<Size>("RemoteWebWindow.size").Result; return new Size(l.Width, l.Height); } set => Client.SetSize(new SizeMessageRequest { Id = Id, Width = value.Width, Height = value.Height }); }
-
-        public string Title { get => Client.GetTitle(new IdMessageRequest { Id = Id }).Response; set => Client.SetTitle(new StringRequest { Id = Id, Request = value }); }
-
-        public int Top { get => JSRuntime.InvokeAsync<int>("RemoteWebWindow.top").Result; set => Client.SetTop(new IntMessageRequest { Id = Id, Message = value }); } 
+        public Size Size { get { var l = JSRuntime.InvokeAsync<Size>("RemoteWebWindow.size").Result; return new Size(l.Width, l.Height); } set => JSRuntime.InvokeVoidAsync("RemoteWebWindow.setSize", new object[] { value }); }
        
+        public string Title { get => JSRuntime.InvokeAsync<string>("RemoteWebWindow.title").Result; set => JSRuntime.InvokeVoidAsync("RemoteWebWindow.setTitle", new object[] { value }); }
+
+        public int Top { get => JSRuntime.InvokeAsync<int>("RemoteWebWindow.top").Result; set => JSRuntime.InvokeVoidAsync("RemoteWebWindow.setTop", new object[] { value }); }
 
         public bool Topmost { get => false; set { } }
 
-
-        public int Width { get => JSRuntime.InvokeAsync<int>("RemoteWebWindow.width").Result; set => Client.SetWidth(new IntMessageRequest { Id = Id, Message = value }); }
-        public IJSRuntime JSRuntime { get; set; }
+        public int Width { get => JSRuntime.InvokeAsync<int>("RemoteWebWindow.width").Result; set => JSRuntime.InvokeVoidAsync("RemoteWebWindow.setWidth", new object[] { value }); }
 
         public event EventHandler<string> OnWebMessageReceived;
         public event EventHandler<Point> LocationChanged;
@@ -182,22 +183,18 @@ namespace PeakSwc.RemoteableWebWindows
 
         public void WaitForExit()
         {
-            // TODO
-            //Client.WaitForExit(new IdMessageRequest { Id = id });
-            //cts.Cancel();
             while (true)
             {
-                lock(bootLock)
+                lock (bootLock)
                 {
-                    if (bootCount>=1)
+                    if (bootCount >= 1)
                     {
                         bootCount = 0;
                         break;
                     }
                 }
                 Thread.Sleep(1000);
-            }
-               
+            }              
 
         }
 

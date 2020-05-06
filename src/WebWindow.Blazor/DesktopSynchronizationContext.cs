@@ -66,6 +66,8 @@ namespace WebWindows.Blazor
                 _cancellationToken = cancellationToken;
                 _thread = new Thread(ProcessQueue);
                 _thread.Start();
+
+                new Thread(ProcessQueue).Start();
             }
 
             public BlockingCollection<WorkItem> Queue { get; } = new BlockingCollection<WorkItem>();

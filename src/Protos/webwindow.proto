@@ -120,45 +120,18 @@ message MonitorResponse {
 }
 
 service RemoteWebWindow {
-    rpc GetHeight(IdMessageRequest) returns (IntMessageResponse);
-    rpc SetHeight(IntMessageRequest) returns (google.protobuf.Empty);
-
-    rpc GetLeft(IdMessageRequest) returns (IntMessageResponse);
-    rpc SetLeft(IntMessageRequest) returns (google.protobuf.Empty);
-
-    rpc GetLocation(IdMessageRequest) returns (PointMessageResponse);
-    rpc SetLocation(PointMessageRequest) returns (google.protobuf.Empty);
-
-    rpc GetMonitors(IdMessageRequest) returns (MonitorResponse);
     
-    rpc GetResizable(IdMessageRequest) returns (BoolResponse);
-    rpc SetResizable(BoolRequest) returns (google.protobuf.Empty);
-
-    rpc GetScreenDpi(IdMessageRequest) returns (UInt32Response);
 
      rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty); 
-     rpc SetIconFile(SendMessageRequest) returns (google.protobuf.Empty); 
-
+    
      rpc Show (IdMessageRequest) returns (google.protobuf.Empty);
      rpc ShowMessage(ShowMessageRequest) returns (google.protobuf.Empty);
-
-     rpc GetSize(IdMessageRequest) returns (SizeMessageResponse);
-     rpc SetSize(SizeMessageRequest) returns (google.protobuf.Empty);  
-
-     rpc GetTitle(IdMessageRequest) returns (StringResponse);
-     rpc SetTitle(StringRequest) returns (google.protobuf.Empty);
-
-    rpc GetTop(IdMessageRequest) returns (IntMessageResponse);
-    rpc SetTop(IntMessageRequest) returns (google.protobuf.Empty);
 
     rpc NavigateToLocalFile(FileMessageRequest) returns (google.protobuf.Empty);
     rpc NavigateToString(StringRequest) returns (google.protobuf.Empty);
     rpc NavigateToUrl(UrlMessageRequest) returns (google.protobuf.Empty);
 
     rpc WaitForExit(IdMessageRequest) returns (google.protobuf.Empty);
-
-    rpc GetWidth(IdMessageRequest) returns (IntMessageResponse);
-    rpc SetWidth(IntMessageRequest) returns (google.protobuf.Empty);
 
     rpc CreateWebWindow(CreateWebWindowRequest) returns (stream WebMessageResponse);
     rpc FileReader(stream FileReadRequest) returns (stream FileReadResponse);  

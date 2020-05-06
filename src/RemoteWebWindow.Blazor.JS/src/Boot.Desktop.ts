@@ -91,29 +91,52 @@ function boot() {
 
 (<any>window).RemoteWebWindow = {
 
-    width: function (id) {
+    width: function () {
 
         return window.outerWidth;
     },
-    height: function (id) {
+    setWidth: function (width) {
+        window.resizeTo(width, window.outerHeight);
+    },
+    height: function () {
         return window.outerHeight;
     },
-    left: function (id) {
+    setHeight: function (height) {
+        window.resizeTo(window.outerWidth, height);
+    },
+
+    left: function () {
         return window.screenLeft;
     },
-    setLeft: function (id, left) {
-        return window.moveTo(left, window.screenY)
+    setLeft: function (left) {
+        window.moveTo(left, window.screenY)
     },
-    location: function (id) {
+    location: function () {
         return { X: window.screenX, Y: window.screenY }
     },
-    top: function (id) {
+    setLocation: function (location) {
+        window.moveTo(location.x, location.y)
+    },
+    top: function () {
         return window.screenTop;
     },
-    size: function (id) {
+    setTop: function (top) {
+        window.moveTo(window.screenX, top);
+    },
+    size: function () {
         return { Height: window.outerHeight, Width: window.outerWidth }
     },
 
+    title: function () {
+        return window.document.title
+    },
+
+    setTitle: function (title) {
+        return window.document.title = title;
+    },
+    setSize: function (size) {
+        return window.resizeTo(size.width, size.height);
+    },
 
 };
   

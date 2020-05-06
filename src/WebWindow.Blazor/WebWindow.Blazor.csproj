@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RemotableWebWindow\RemotableWebWindow.csproj" />
     <ProjectReference Include="..\WebWindow\WebWindow.csproj" />
   </ItemGroup>
 

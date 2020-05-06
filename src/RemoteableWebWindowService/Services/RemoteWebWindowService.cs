@@ -165,73 +165,7 @@ namespace PeakSwc.RemoteableWebWindows
             //_webWindowDictionary[id].NavigateToLocalFile(request.Path);
             return Task.FromResult<Empty>(new Empty());
         }
-
-        public async override Task<IntMessageResponse> GetHeight(IdMessageRequest request, ServerCallContext context)
-        {
-            return new IntMessageResponse { Response = await _jsRuntime.InvokeAsync<int>("RemoteWebWindow.height") };
-        }
-
-        public async override Task<IntMessageResponse> GetLeft(IdMessageRequest request, ServerCallContext context)
-        {
-            return new IntMessageResponse { Response = await _jsRuntime.InvokeAsync<int>("RemoteWebWindow.left") };
-        }
-
-        public async override Task<PointMessageResponse> GetLocation(IdMessageRequest request, ServerCallContext context)
-        {
-            Point p = await _jsRuntime.InvokeAsync<Point>("RemoteWebWindow.location");
-           
-            return new PointMessageResponse { X=p.X, Y=p.Y  };
-        }
-
-        //public override Task<MonitorResponse> GetMonitors(IdMessageRequest request, ServerCallContext context)
-        //{
-        //    Guid id = Guid.Parse(request.Id);
-        //    var monitors = _webWindowDictionary[id].Monitors;
-        //    var response = new MonitorResponse();
-        //    foreach (var m in monitors)
-        //        response.Instances.Add(new MonitorResponse.Types.Instance { MonitorArea = new RectangleResponse { Height=m.MonitorArea.Height, Width=m.MonitorArea.Width, X=m.MonitorArea.X, Y=m.MonitorArea.Y }, WorkArea = new RectangleResponse { Height = m.WorkArea.Height, Width = m.WorkArea.Width, X = m.WorkArea.X, Y = m.WorkArea.Y } });
-
-        //    return Task.FromResult(response);
-        //}
-
-        //public override Task<BoolResponse> GetResizable(IdMessageRequest request, ServerCallContext context)
-        //{
-        //    Guid id = Guid.Parse(request.Id);
-
-        //    return Task.FromResult(new BoolResponse {  Response = _webWindowDictionary[id].Resizable });
-        //}
-
-        //public override Task<UInt32Response> GetScreenDpi(IdMessageRequest request, ServerCallContext context)
-        //{
-        //    Guid id = Guid.Parse(request.Id);
-
-        //    return Task.FromResult(new UInt32Response {  Response = _webWindowDictionary[id].ScreenDpi });       
-        //}
-
-        public async override Task<SizeMessageResponse> GetSize(IdMessageRequest request, ServerCallContext context)
-        {
-            Size s = await _jsRuntime.InvokeAsync<Size>("RemoteWebWindow.size");
-            return new SizeMessageResponse {  Height=s.Height, Width=s.Width };
-        }
-
-        public override Task<StringResponse> GetTitle(IdMessageRequest request, ServerCallContext context)
-        {
-            Guid id = Guid.Parse(request.Id);
-            var title = "";
-            // TODO
-            return Task.FromResult(new StringResponse { Response = title });
-        }
-
-        public async override Task<IntMessageResponse> GetTop(IdMessageRequest request, ServerCallContext context)
-        {
-            return new IntMessageResponse { Response = await _jsRuntime.InvokeAsync<int>("RemoteWebWindow.top") };
-        }
-
-        public async override Task<IntMessageResponse> GetWidth(IdMessageRequest request, ServerCallContext context)
-        {
-            return new IntMessageResponse { Response = await _jsRuntime.InvokeAsync<int>("RemoteWebWindow.width") };
-        }
-
+       
         public override Task<Empty> NavigateToString(StringRequest request, ServerCallContext context)
         {
             Guid id = Guid.Parse(request.Id);
@@ -239,57 +173,6 @@ namespace PeakSwc.RemoteableWebWindows
             return Task.FromResult<Empty>(new Empty());
         }
 
-        public override Task<Empty> SetHeight(IntMessageRequest request, ServerCallContext context)
-        {
-            Guid id = Guid.Parse(request.Id);
-            // TODO  _webWindowDictionary[id].Height = request.Message;
-            return Task.FromResult<Empty>(new Empty());
-        }
-
-        public override Task<Empty> SetIconFile(SendMessageRequest request, ServerCallContext context)
-        {
-            return Task.FromResult<Empty>(new Empty());
-        }
-
-        public async override Task<Empty> SetLeft(IntMessageRequest request, ServerCallContext context)
-        {
-            await _jsRuntime.InvokeAsync<int>("RemoteWebWindow.setLeft", new object[] { request.Id, request.Message });
-            return new Empty();
-        }
-        public override Task<Empty> SetLocation(PointMessageRequest request, ServerCallContext context)
-        {        
-            Guid id = Guid.Parse(request.Id);
-            // TODO _webWindowDictionary[id].Location = new Point(request.X, request.Y);
-            return Task.FromResult<Empty>(new Empty());
-        }
-        public override Task<Empty> SetResizable(BoolRequest request, ServerCallContext context)
-        {
-            return Task.FromResult<Empty>(new Empty());
-        }
-        public override Task<Empty> SetSize(SizeMessageRequest request, ServerCallContext context)
-        {
-            Guid id = Guid.Parse(request.Id);
-            // TODO_webWindowDictionary[id].Size = new Size(request.Width, request.Height);
-            return Task.FromResult<Empty>(new Empty());
-        }
-        public override Task<Empty> SetTitle(StringRequest request, ServerCallContext context)
-        {
-            Guid id = Guid.Parse(request.Id);
-            // TODO _webWindowDictionary[id].Title = request.Request;
-            return Task.FromResult<Empty>(new Empty());
-        }
-        public override Task<Empty> SetTop(IntMessageRequest request, ServerCallContext context)
-        {
-            Guid id = Guid.Parse(request.Id);
-            // TODO _webWindowDictionary[id].Top = request.Message;
-            return Task.FromResult<Empty>(new Empty());
-        }
        
-        public override Task<Empty> SetWidth(IntMessageRequest request, ServerCallContext context)
-        {
-            Guid id = Guid.Parse(request.Id);
-            // TODO _webWindowDictionary[id].Width = request.Message;
-            return Task.FromResult<Empty>(new Empty());
-        }
     }
 }
