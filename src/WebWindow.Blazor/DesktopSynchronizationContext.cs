@@ -68,6 +68,7 @@ namespace WebWindows.Blazor
                 _thread.Start();
 
                 new Thread(ProcessQueue).Start();
+                new Thread(ProcessQueue).Start();
             }
 
             public BlockingCollection<WorkItem> Queue { get; } = new BlockingCollection<WorkItem>();

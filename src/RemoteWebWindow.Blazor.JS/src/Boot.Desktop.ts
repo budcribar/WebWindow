@@ -87,10 +87,23 @@ function boot() {
     ipc.on('JS.Error', (message) => {
         console.error(message);
     });
+
+    window.addEventListener('resize', (event) => {
+        if ((<any>window).RemoteWebWindow.resizeEventHandlerAttached)
+            sendMessage("size:" + JSON.stringify((<any>window).RemoteWebWindow.size()));
+    });
+
+    
+
 }
 
 (<any>window).RemoteWebWindow = {
 
+    resizeEventHandlerAttached: true,
+    setResizeEventHandlerAttached: function (value) {
+        (<any>window).RemoteWebWindow.resizeEventHandlerAttached = value;
+    },
+    
     width: function () {
 
         return window.outerWidth;
@@ -124,7 +137,7 @@ function boot() {
         window.moveTo(window.screenX, top);
     },
     size: function () {
-        return { Height: window.outerHeight, Width: window.outerWidth }
+        return { Width: window.outerWidth, Height: window.outerHeight }
     },
 
     title: function () {

@@ -90,18 +90,19 @@ namespace PeakSwc.RemoteableWebWindows
                     var guid = context.Request.Cookies["guid"];
                     var home = context.Request.Cookies["home"];
 
-                    if (context.Request.QueryString.HasValue && context.Request.QueryString.Value.Contains("restart"))
+                    if (ipcDictionary.ContainsKey(Guid.Parse(guid)))
                     {
 
-                        ipcDictionary[Guid.Parse(guid)].ReceiveMessage("booted:");
+                        if (context.Request.QueryString.HasValue && context.Request.QueryString.Value.Contains("restart"))
+                        {                         
+                            ipcDictionary[Guid.Parse(guid)].ReceiveMessage("booted:");
 
-                        // TODO synchronize properly
-                        Thread.Sleep(3000);
+                            // TODO synchronize properly
+                            Thread.Sleep(3000);
+                        }
 
+                        context.Response.Redirect(home);
                     }
-
-                    context.Response.Redirect(home);
-                    //context.Response.Headers.Add("Refresh", "10");
                 });
 
                 endpoints.MapRazorPages();               

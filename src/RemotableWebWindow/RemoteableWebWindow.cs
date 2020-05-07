@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Microsoft.JSInterop;
+using Newtonsoft.Json.Linq;
 
 namespace PeakSwc.RemoteableWebWindows
 {
@@ -64,14 +65,27 @@ namespace PeakSwc.RemoteableWebWindows
                                         break;
                                     case "webmessage":
                                         if (data == "booted:")
-                                            lock(bootLock)
+                                        {
+                                            lock (bootLock)
                                             {
                                                 bootCount++;
                                                 //if (bootCount >= 1)
                                                 //    cts.Cancel();
                                             }
-                                                
+                                        }
+                                        else if (data.StartsWith("size:"))
+                                        {
+                                            var size = data.Replace("size:","");
+                                            var jo = JsonConvert.DeserializeObject<JObject>(size);
 
+                                            Task.Run(() =>
+                                            {
+                                                // Hangs otherwise
+                                                SizeChanged?.Invoke(null, new Size((int)jo["Width"], (int)jo["Height"]));
+                                            });
+
+                                            
+                                        }
                                         else
 
                                             OnWebMessageReceived?.Invoke(null, data);
@@ -79,9 +93,7 @@ namespace PeakSwc.RemoteableWebWindows
                                     case "location":
                                         LocationChanged?.Invoke(null, JsonConvert.DeserializeObject<Point>( data));
                                         break;
-                                    case "size":
-                                        SizeChanged?.Invoke(null, JsonConvert.DeserializeObject<Size>(data));
-                                        break;
+                                    
                                 }
                                                                
                             }
@@ -150,7 +162,10 @@ namespace PeakSwc.RemoteableWebWindows
         public int Width { get => JSRuntime.InvokeAsync<int>("RemoteWebWindow.width").Result; set => JSRuntime.InvokeVoidAsync("RemoteWebWindow.setWidth", new object[] { value }); }
 
         public event EventHandler<string> OnWebMessageReceived;
+
+       
         public event EventHandler<Point> LocationChanged;
+
         public event EventHandler<Size> SizeChanged;
 
         public RemotableWebWindow(Uri uri, string windowTitle, string hostHtmlPath)
