@@ -81,7 +81,7 @@ namespace PeakSwc.RemoteableWebWindows
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<WebWindowHub>("/webWindowHub", (x) => { x.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling; });
+                //endpoints.MapHub<WebWindowHub>("/webWindowHub", (x) => { x.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling; });
                 //endpoints.PeakSwcMapBlazorHub((x) => { x.Transports = Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling; });
                 //endpoints.PeakSwcMapBlazorHub();
                 endpoints.MapGrpcService<RemoteWebWindowService>();
