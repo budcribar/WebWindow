@@ -3,6 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>PeakSwc.RemoteableWebWindows</RootNamespace>
+    <Version>0.0.1-dev</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Company>Peak Software Consulting, LLC</Company>
+    <Authors>Bud Cribar</Authors>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageId>PeakSWC.RemotableWebWindow</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,6 +24,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WebWindow\WebWindow.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 
